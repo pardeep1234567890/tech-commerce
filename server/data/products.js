@@ -17,7 +17,7 @@ const products = [
   },
   {
     name: 'Aura "Essential" T-Shirt',
-    image: 'https://images.unsplash.com/photo-1583743814966-8936f5b7r1af?w=500',
+    image: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500',
     description:
       'The perfect oversized t-shirt in a washed black finish. Features a relaxed fit, drop shoulders, and a durable rib-knit collar. The ultimate "essential" piece.',
     brand: 'Aura Apparel',
