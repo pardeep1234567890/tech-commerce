@@ -1,19 +1,26 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Search, User, ShoppingBag, Menu, X } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Search, User, ShoppingBag, Menu, X, LogOut, UserCircle } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { cartItems, toggleCart } = useCart();
+  const { auth, logout } = useAuth();
+  const navigate = useNavigate();
 
   const totalItems = cartItems.reduce((acc, item) => acc + item.qty, 0);
+  const handleLogout = () => {
+    logout()
+    navigate("/");
+  }
 
   return (
     <header className="sticky top-0 z-50 border-b border-gray-200 bg-white bg-opacity-90 backdrop-blur-md">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          
+
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link to="/" className="text-2xl font-bold tracking-widest text-black">
@@ -39,14 +46,31 @@ const Header = () => {
             <button className="hidden text-gray-600 hover:text-black md:block">
               <Search size={20} />
             </button>
-            <Link to="/login" className="text-gray-600 hover:text-black">
-              <User size={20} />
-            </Link>
             <button onClick={toggleCart} className="flex items-center text-gray-600 hover:text-black">
               <ShoppingBag size={20} />
               <span className="ml-1 text-sm font-medium">({totalItems})</span>
             </button>
-            
+
+            {auth ?
+              (<div className="flex items-center space-x-2">
+                <UserCircle size={20} />
+                <span className="text-sm font-medium text-black mr-2">
+                  Hi, {auth.name}
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-1 text-sm font-medium text-gray-600 hover:text-black "
+                >
+                  <LogOut size={16} />
+                  <span>Logout</span>
+                </button>
+              </div>) :
+              <Link to="/login" className="flex items-center text-gray-600 hover:text-black">
+                <UserCircle size={20} className="mr-1" />
+                <span className="text-sm font-medium">Login</span>
+              </Link>
+            }
+
             {/* Mobile Menu Button */}
             <button
               className="text-gray-600 hover:text-black md:hidden"
