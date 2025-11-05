@@ -7,11 +7,11 @@ const userSchema = new mongoose.Schema(
         email: { type: String, required: true, unique: true },
         password: { type: String, required: true },
         isAdmin: { type: Boolean, required: true, default: false },
-        // We can add wishlist here later
-        // wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }]
+        wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }]
     },
     { timestamps: true }
 );
+
 
 // This function will run before a user is saved (for hashing passwords)
 userSchema.pre('save', async function (next) {

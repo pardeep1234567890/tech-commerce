@@ -58,3 +58,24 @@ export const loginUser = async (req, res) => {
     res.status(401).json({ message: 'Invalid email or password' });
   }
 };
+export const toggleWishlist = async (req, res) => {
+  // Get the product id from request body 
+  const { productId } = req.body;
+  // get the user 
+  const user = await User.findById(req.user._id);
+  //if not user then send error
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+  // Check if the product is *already* in the wishlist
+  const index = user.wishlist.indexOf(productId)
+  // If it IS in the list (index is not -1), remove it
+  if (index > -1) {
+    user.wishlist.pull(productId);
+    // user.wishlist.splice(index, 1);
+  } else {
+    user.wishlist.push(productId);
+  }
+  await user.save();
+  res.status(200).json({ wishlist: user.wishlist });
+}
