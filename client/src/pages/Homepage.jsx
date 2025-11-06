@@ -33,13 +33,13 @@ const Homepage = () => {
 
       {/* Featured Products Section */}
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-        <h2 className="text-2xl font-bold uppercase tracking-widest text-black">
+        <h2 className="text-2xl font-bold uppercase tracking-widest text-black dark:text-white">
           Featured
         </h2>
 
         {/* Loading and Error states */}
-        {loading && <p className="mt-4 text-gray-600">Loading products...</p>}
-        {error && <p className="mt-4 text-red-500">Error: {error}</p>}
+        {loading && <p className="mt-4 text-gray-600 dark:text-gray-400">Loading products...</p>}
+        {error && <p className="mt-4 text-red-500 dark:text-red-400">Error: {error}</p>}
 
         {/* Product Grid */}
         {!loading && !error && (

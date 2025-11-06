@@ -13,7 +13,7 @@ import RegisterPage from './pages/RegisterPage';
 
 function App() {
   return (
-    <div className="flex min-h-screen flex-col bg-white text-black">
+    <div className="flex min-h-screen flex-col bg-white text-black dark:bg-black dark:text-white transition-colors duration-300">
       <Header />
       <CartModal />
       <ToastContainer 

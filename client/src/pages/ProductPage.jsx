@@ -33,13 +33,13 @@ const ProductPage = () => {
 
     // --- Render states ---
     if (loading) {
-        return <div className="p-8 text-center">Loading product...</div>;
+        return <div className="p-8 text-center dark:text-gray-400">Loading product...</div>;
     }
     if (error) {
-        return <div className="p-8 text-center text-red-500">Error: {error}</div>;
+        return <div className="p-8 text-center text-red-500 dark:text-red-400">Error: {error}</div>;
     }
     if (!product) {
-        return <div className="p-8 text-center">Product not found.</div>;
+        return <div className="p-8 text-center dark:text-gray-400">Product not found.</div>;
     }
 
     // --- Main Product Display ---
@@ -48,7 +48,7 @@ const ProductPage = () => {
             {/* Back link */}
             <Link
                 to="/shop"
-                className="mb-8 flex items-center text-sm font-medium text-gray-600 hover:text-black"
+                className="mb-8 flex items-center text-sm font-medium text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white"
             >
                 <ChevronLeft size={20} className="mr-1" />
                 Back to Shop
@@ -56,7 +56,7 @@ const ProductPage = () => {
 
             <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-2">
                 {/* Left Col: Image */}
-                <div className="w-full overflow-hidden rounded-lg bg-gray-100">
+                <div className="w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
                     <img
                         src={product.image}
                         alt={product.name}
@@ -66,11 +66,11 @@ const ProductPage = () => {
 
                 {/* Right Col: Info */}
                 <div className="flex flex-col">
-                    <h1 className="text-3xl font-bold uppercase tracking-widest text-black">
+                    <h1 className="text-3xl font-bold uppercase tracking-widest text-black dark:text-white">
                         {product.name}
                     </h1>
 
-                    <p className="mt-2 text-3xl tracking-tight text-black">
+                    <p className="mt-2 text-3xl tracking-tight text-black dark:text-white">
                         ${product.price.toFixed(2)}
                     </p>
 
@@ -81,28 +81,28 @@ const ProductPage = () => {
                                 <Star
                                     key={rating}
                                     size={20}
-                                    className={product.rating > rating ? 'text-black' : 'text-gray-300'}
+                                    className={product.rating > rating ? 'text-black dark:text-white' : 'text-gray-300 dark:text-gray-600'}
                                     fill="currentColor"
                                 />
                             ))}
                         </div>
-                        <span className="ml-2 text-sm text-gray-600">
+                        <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">
                             ({product.numReviews} reviews)
                         </span>
                     </div>
 
                     {/* Description */}
-                    <p className="mt-6 text-base text-gray-700">
+                    <p className="mt-6 text-base text-gray-700 dark:text-gray-300">
                         {product.description}
                     </p>
 
                     {/* Options (e.g., Size) - UI Only for now */}
                     <div className="mt-6">
-                        <h3 className="text-sm font-medium text-black">Size</h3>
+                        <h3 className="text-sm font-medium text-black dark:text-white">Size</h3>
                         <select
                             id="size"
                             name="size"
-                            className="mt-2 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-black focus:outline-none focus:ring-black sm:text-sm"
+                            className="mt-2 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white py-2 pl-3 pr-10 text-base focus:border-black dark:focus:border-white focus:outline-none focus:ring-black dark:focus:ring-white sm:text-sm"
                         >
                             <option>Small</option>
                             <option>Medium</option>
@@ -115,7 +115,7 @@ const ProductPage = () => {
                     <button
                         type="button"
                         onClick={() => addToCart(product)}
-                        className="mt-8 flex w-full items-center justify-center rounded-md border border-transparent bg-black px-8 py-3 text-base font-medium text-white transition-opacity hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                        className="mt-8 flex w-full items-center justify-center rounded-md border border-transparent bg-black dark:bg-white px-8 py-3 text-base font-medium text-white dark:text-black transition-opacity hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white focus:ring-offset-2"
                     >
                         Add to Cart
                     </button>
