@@ -79,3 +79,14 @@ export const toggleWishlist = async (req, res) => {
   await user.save();
   res.status(200).json({ wishlist: user.wishlist });
 }
+
+export const getMyWishlist = async (req, res) => {
+  const user = await User.findById(req.user._id).populate('wishlist'); 
+
+  if (user) {
+    res.json(user.wishlist);
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+};

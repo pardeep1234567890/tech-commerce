@@ -9,7 +9,10 @@ import ProductPage from './pages/ProductPage';
 import CartModal from './components/CartModal';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-
+import AboutPage from './pages/AboutPage';
+import NewPage from './pages/NewPage';
+import WishlistPage from './pages/WishlistPage';
+import SearchPage from './pages/SearchPage';
 
 function App() {
   return (
@@ -35,6 +38,10 @@ function App() {
           <Route path="/product/:id" element={<ProductPage />} />
           <Route path="/login" element={<LoginPage/>} />
           <Route path="/register" element={<RegisterPage/>} />
+          <Route path="/about" element={<AboutPage/>} />
+          <Route path="/new" element={<NewPage/>} />
+          <Route path="/wishlist" element={<WishlistPage />} />
+          <Route path="/search/:keyword" element={<SearchPage/>} />
         </Routes>
       </main>
       <Footer />

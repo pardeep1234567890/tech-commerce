@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import ProductCard from '../components/ProductCard';
+import Loading from '../components/Loading';
 
 const ShopPage = () => {
   const [products, setProducts] = useState([]);
@@ -14,6 +15,7 @@ const ShopPage = () => {
           throw new Error('Failed to fetch products');
         }
         const data = await res.json();
+        console.log('Fetched products from API:', data);
         setProducts(data);
       } catch (err) {
         setError(err.message);
@@ -24,6 +26,7 @@ const ShopPage = () => {
 
     fetchProducts();
   }, []);
+  console.log('Rendering with products state:', products);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -53,7 +56,7 @@ const ShopPage = () => {
 
           {/* --- Product Grid --- */}
           <div className="lg:col-span-3">
-            {loading && <p className="dark:text-gray-400">Loading products...</p>}
+            {loading && <Loading text="Loading products..." />}
             {error && <p className="text-red-500 dark:text-red-400">Error: {error}</p>}
             
             {!loading && !error && (

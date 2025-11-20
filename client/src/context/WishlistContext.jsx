@@ -1,4 +1,4 @@
-import { createContext, useState, useContext } from 'react';
+import { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from './AuthContext'; // We need this to get the token!
 import { toast } from 'react-toastify';
@@ -10,6 +10,37 @@ const API_URL = "http://localhost:3000"; // Or your port
 export const WishlistProvider = ({ children }) => {
     const [wishlist, setWishlist] = useState([]);
     const { auth } = useAuth(); // Get the logged-in user's info
+
+    // Fetch wishlist from backend
+    const fetchWishlist = async () => {
+        if (!auth) {
+            setWishlist([]);
+            return;
+        }
+
+        try {
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${auth.token}`,
+                },
+            };
+
+            const { data } = await axios.get(`${API_URL}/api/users/wishlist`, config);
+            // Backend returns populated products, we need just the IDs
+            const wishlistIds = Array.isArray(data) 
+                ? data.map(product => product._id || product) 
+                : [];
+            setWishlist(wishlistIds);
+        } catch (error) {
+            console.error('Failed to fetch wishlist:', error);
+            setWishlist([]);
+        }
+    };
+
+    // Load wishlist when auth changes
+    useEffect(() => {
+        fetchWishlist();
+    }, [auth]);
 
     // Check if an item is wishlisted (just checks the local array)
     const isWishlisted = (productId) => {
@@ -61,6 +92,7 @@ export const WishlistProvider = ({ children }) => {
         setWishlist, // We'll use this on login
         isWishlisted,
         toggleWishlist,
+        fetchWishlist, // Export this in case we need to manually refresh
     };
 
     return (

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Star, ChevronLeft } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import Loading from '../components/Loading';
 
 const ProductPage = () => {
     const { id: productId } = useParams(); // Get the 'id' from the URL
@@ -33,7 +34,7 @@ const ProductPage = () => {
 
     // --- Render states ---
     if (loading) {
-        return <div className="p-8 text-center dark:text-gray-400">Loading product...</div>;
+        return <Loading fullScreen text="Loading product..." />;
     }
     if (error) {
         return <div className="p-8 text-center text-red-500 dark:text-red-400">Error: {error}</div>;

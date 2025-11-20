@@ -1,14 +1,18 @@
 import { Link } from 'react-router-dom';
+import heroImage from '../assets/hero.jpg';
 
 const Hero = () => {
   return (
     <div className="relative h-[60vh] min-h-[400px] w-full bg-black dark:bg-gray-950 sm:h-[80vh]">
       {/* Background Image - Replace with a real one! */}
       <img
-        src="https://images.unsplash.com/photo-1516762689617-e1cff2b48e38?w=1000"
+        src={heroImage}
         alt="Streetwear model"
-        className="absolute inset-0 h-full w-full object-cover opacity-50 dark:opacity-40"
+        className="absolute inset-0 h-full w-full object-cover opacity-60 dark:opacity-70"
       />
+      
+      {/* Overlay for better text readability */}
+      <div className="absolute inset-0 bg-black/30 dark:bg-black/40"></div>
       
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white">
         <h1 className="text-4xl font-extrabold uppercase tracking-widest sm:text-6xl lg:text-7xl">

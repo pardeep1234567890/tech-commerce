@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import Hero from '../components/Hero';
 import ProductCard from '../components/ProductCard';
+import AboutPage from './AboutPage';
+import Loading from '../components/Loading';
 
 const Homepage = () => {
   // No more types in useState!
@@ -38,7 +40,7 @@ const Homepage = () => {
         </h2>
 
         {/* Loading and Error states */}
-        {loading && <p className="mt-4 text-gray-600 dark:text-gray-400">Loading products...</p>}
+        {loading && <Loading text="Loading products..." />}
         {error && <p className="mt-4 text-red-500 dark:text-red-400">Error: {error}</p>}
 
         {/* Product Grid */}
@@ -50,6 +52,7 @@ const Homepage = () => {
           </div>
         )}
       </div>
+      <AboutPage/>
     </div>
   );
 };
