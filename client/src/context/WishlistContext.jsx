@@ -2,10 +2,9 @@ import { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from './AuthContext'; // We need this to get the token!
 import { toast } from 'react-toastify';
+import { BACKEND_URL } from '../config/api';
 
 const WishlistContext = createContext();
-
-const API_URL = "http://localhost:3000"; // Or your port
 
 export const WishlistProvider = ({ children }) => {
     const [wishlist, setWishlist] = useState([]);
@@ -25,7 +24,7 @@ export const WishlistProvider = ({ children }) => {
                 },
             };
 
-            const { data } = await axios.get(`${API_URL}/api/users/wishlist`, config);
+            const { data } = await axios.get(`${BACKEND_URL}/api/users/wishlist`, config);
             // Backend returns populated products, we need just the IDs
             const wishlistIds = Array.isArray(data) 
                 ? data.map(product => product._id || product) 
@@ -65,7 +64,7 @@ export const WishlistProvider = ({ children }) => {
 
             // Send the productId and the token
             const { data } = await axios.post(
-                `${API_URL}/api/users/wishlist`,
+                `${BACKEND_URL}/api/users/wishlist`,
                 { productId }, // The data we are sending
                 config           // The auth headers
             );
