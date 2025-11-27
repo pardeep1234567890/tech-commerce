@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
 import { ChevronLeft } from 'lucide-react';
+import { BACKEND_URL } from '../../config/api';
 
 const ProductEditPage = () => {
   const { id: productId } = useParams();
@@ -22,7 +23,7 @@ const ProductEditPage = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:3000/api/products/${productId}`);
+        const { data } = await axios.get(`${BACKEND_URL}/api/products/${productId}`);
         setName(data.name);
         setPrice(data.price);
         setImage(data.image);
@@ -49,7 +50,7 @@ const ProductEditPage = () => {
       };
 
       await axios.put(
-        `http://localhost:3000/api/products/${productId}`,
+        `${BACKEND_URL}/api/products/${productId}`,
         {
           name,
           price,

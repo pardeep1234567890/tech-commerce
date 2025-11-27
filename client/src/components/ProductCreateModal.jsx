@@ -3,6 +3,7 @@ import { X, Upload, Image as ImageIcon } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
+import { BACKEND_URL } from '../config/api';
 
 const ProductCreateModal = ({ isOpen, onClose, onSuccess }) => {
   const { auth } = useAuth();
@@ -33,7 +34,7 @@ const ProductCreateModal = ({ isOpen, onClose, onSuccess }) => {
   useEffect(() => {
     const fetchSuggestions = async () => {
       try {
-        const { data } = await axios.get('http://localhost:3000/api/products');
+        const { data } = await axios.get(`${BACKEND_URL}/api/products`);
         const uniqueCategories = [...new Set(data.map(p => p.category).filter(Boolean))];
         const uniqueBrands = [...new Set(data.map(p => p.brand).filter(Boolean))];
         setCategories(uniqueCategories);
@@ -106,7 +107,7 @@ const ProductCreateModal = ({ isOpen, onClose, onSuccess }) => {
       };
 
       const { data } = await axios.post(
-        'http://localhost:3000/api/upload',
+        `${BACKEND_URL}/api/upload`,
         formData,
         config
       );
@@ -155,7 +156,7 @@ const ProductCreateModal = ({ isOpen, onClose, onSuccess }) => {
       };
 
       const { data } = await axios.post(
-        'http://localhost:3000/api/products',
+        `${BACKEND_URL}/api/products`,
         {
           name,
           price: Number(price),

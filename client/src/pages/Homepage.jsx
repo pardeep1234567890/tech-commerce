@@ -4,6 +4,7 @@ import ProductCard from '../components/ProductCard';
 import AboutPage from './AboutPage';
 import Loading from '../components/Loading';
 import axios from 'axios';
+import { BACKEND_URL } from '../config/api';
 
 const Homepage = () => {
   // No more types in useState!
@@ -14,7 +15,7 @@ const Homepage = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get('http://localhost:3000/api/products');
+        const res = await axios.get(`${BACKEND_URL}/api/products`);
         const data = res.data;
         setProducts(data);  //Here we set the data into the products variable  
       } catch (err) { // Simpler catch block

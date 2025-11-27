@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import ProductCard from '../components/ProductCard';
 import axios from 'axios';
+import { BACKEND_URL } from '../config/api';
 const NewPage = () => {
   const [newProducts, setNewProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -9,7 +10,7 @@ const NewPage = () => {
   useEffect(() => {
     const fetchNewProducts = async () => {
       try {
-        const res = await axios.get('http://localhost:3000/api/products');
+        const res = await axios.get(`${BACKEND_URL}/api/products`);
         const allProducts = res.data;
 
         const thirtyDaysAgo = new Date(); // creates a date object with today's date

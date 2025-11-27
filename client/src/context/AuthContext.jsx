@@ -1,6 +1,7 @@
 import { useContext, createContext, useState, useEffect, Children } from "react";
 import axios from "axios"
 import { toast } from "react-toastify";
+import { BACKEND_URL } from '../config/api';
 
 const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
@@ -21,7 +22,7 @@ export const AuthProvider = ({ children }) => {
     // 1. i did not use async/await , did not give parameter , or don't send the data as object , console.error
     const login = async (email, password) => {
         try {
-            const { data } = await axios.post("http://localhost:3000/api/users/login", { email, password });
+            const { data } = await axios.post(`${BACKEND_URL}/api/users/login`, { email, password });
             toast.success("Login Successfully")
             setAuth(data);
             localStorage.setItem('auraAuth', JSON.stringify(data));
@@ -33,7 +34,7 @@ export const AuthProvider = ({ children }) => {
     // here we create a register function 
     const register = async (name, email, password) => {
         try {
-            const { data } = await axios.post("http://localhost:3000/api/users", { name, email, password });
+            const { data } = await axios.post(`${BACKEND_URL}/api/users`, { name, email, password });
             toast.success("Register Successfully")
             setAuth(data);
             localStorage.setItem('auraAuth', JSON.stringify(data));

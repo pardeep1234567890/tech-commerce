@@ -19,8 +19,13 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Enable CORS
-app.use(cors());
+// Enable CORS with specific configuration
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || ['http://localhost:5173', 'https://auraapparel.vercel.app'],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
 
 // A simple test route
 app.get('/', (req, res) => {

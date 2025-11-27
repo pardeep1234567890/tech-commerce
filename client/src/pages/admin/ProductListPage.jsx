@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
 import ProductCreateModal from '../../components/ProductCreateModal';
+import { BACKEND_URL } from '../../config/api';
 
 const ProductListPage = () => {
   const [products, setProducts] = useState([]);
@@ -14,7 +15,7 @@ const ProductListPage = () => {
 
   const fetchProducts = async () => {
     // We can just reuse the public API to get the list!
-    const { data } = await axios.get('http://localhost:3000/api/products');
+    const { data } = await axios.get(`${BACKEND_URL}/api/products`);
     setProducts(data);
   };
 
@@ -35,7 +36,7 @@ const ProductListPage = () => {
         const config = {
             headers: { Authorization: `Bearer ${auth.token}` } // Send token
         };
-        await axios.delete(`http://localhost:3000/api/products/${id}`, config);
+        await axios.delete(`${BACKEND_URL}/api/products/${id}`, config);
         
         toast.success('Product Deleted');
         fetchProducts(); // Refresh the list

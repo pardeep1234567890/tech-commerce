@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 import { Package, Calendar, CreditCard, Truck, CheckCircle, Clock, ChevronRight } from 'lucide-react';
 import Loading from '../components/Loading';
+import { BACKEND_URL } from '../config/api';
 
 const MyOrdersPage = () => {
   const { auth } = useAuth();
@@ -17,7 +18,7 @@ const MyOrdersPage = () => {
         const config = {
           headers: { Authorization: `Bearer ${auth.token}` },
         };
-        const { data } = await axios.get('http://localhost:3000/api/orders/myorders', config);
+        const { data } = await axios.get(`${BACKEND_URL}/api/orders/myorders`, config);
         setOrders(data);
         setLoading(false);
       } catch (error) {

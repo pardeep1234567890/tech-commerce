@@ -3,6 +3,7 @@ import axios from 'axios';
 import ProductCard from '../components/ProductCard';
 import { useAuth } from '../context/AuthContext';
 import Loading from '../components/Loading';
+import { BACKEND_URL } from '../config/api';
 
 const WishlistPage = () => {
     const [products, setProducts] = useState([]);
@@ -20,7 +21,7 @@ const WishlistPage = () => {
                 };
 
                 const { data } = await axios.get(
-                    'http://localhost:3000/api/users/wishlist',
+                    `${BACKEND_URL}/api/users/wishlist`,
                     config
                 );
 

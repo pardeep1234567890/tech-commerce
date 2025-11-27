@@ -3,6 +3,7 @@ import ProductCard from '../components/ProductCard';
 import Loading from '../components/Loading';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { BACKEND_URL } from '../config/api';
 
 const SearchPage = () => {
   const [products, setProducts] = useState([]);
@@ -13,7 +14,7 @@ const SearchPage = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/api/products?keyword=${keyword}`);
+        const res = await axios.get(`${BACKEND_URL}/api/products?keyword=${keyword}`);
         const data = res.data;
         setProducts(data);
       } catch (err) {

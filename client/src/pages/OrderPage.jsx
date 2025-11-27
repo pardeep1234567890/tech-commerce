@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
+import { BACKEND_URL } from '../config/api';
 
 const OrderPage = () => {
   const { id: orderId } = useParams();
@@ -17,7 +18,7 @@ const OrderPage = () => {
       const config = {
         headers: { Authorization: `Bearer ${auth.token}` },
       };
-      await axios.put(`http://localhost:3000/api/orders/${order._id}/deliver`, {}, config);
+      await axios.put(`${BACKEND_URL}/api/orders/${order._id}/deliver`, {}, config);
       
       toast.success('Order Delivered');
       
@@ -35,7 +36,7 @@ const OrderPage = () => {
       const config = {
         headers: { Authorization: `Bearer ${auth.token}` },
       };
-      await axios.put(`http://localhost:3000/api/orders/${order._id}/pay`, {}, config);
+      await axios.put(`${BACKEND_URL}/api/orders/${order._id}/pay`, {}, config);
       
       toast.success('Order Marked as Paid');
       window.location.reload(); 
@@ -50,7 +51,7 @@ const OrderPage = () => {
         const config = {
           headers: { Authorization: `Bearer ${auth.token}` },
         };
-        const { data } = await axios.get(`http://localhost:3000/api/orders/${orderId}`, config);
+        const { data } = await axios.get(`${BACKEND_URL}/api/orders/${orderId}`, config);
         setOrder(data);
         setLoading(false);
       } catch (error) {

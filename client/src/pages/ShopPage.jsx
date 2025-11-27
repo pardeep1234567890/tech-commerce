@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import ProductCard from '../components/ProductCard';
 import Loading from '../components/Loading';
 import axios from 'axios';
+import { BACKEND_URL } from '../config/api';
 
 const ShopPage = () => {
   const [products, setProducts] = useState([]);
@@ -14,7 +15,7 @@ const ShopPage = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get('http://localhost:3000/api/products');
+        const res = await axios.get(`${BACKEND_URL}/api/products`);
         const data = res.data;
         console.log('Fetched products from API:', data);
         setProducts(data);

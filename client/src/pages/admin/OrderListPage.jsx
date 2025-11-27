@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
 import { X } from 'lucide-react'; // We use X icon for "Not Delivered"
+import { BACKEND_URL } from '../../config/api';
 
 const OrderListPage = () => {
   const [orders, setOrders] = useState([]);
@@ -15,7 +16,7 @@ const OrderListPage = () => {
         const config = {
           headers: { Authorization: `Bearer ${auth.token}` },
         };
-        const { data } = await axios.get('http://localhost:3000/api/orders', config);
+        const { data } = await axios.get(`${BACKEND_URL}/api/orders`, config);
         setOrders(data);
       } catch (error) {
         toast.error(error.response?.data?.message || error.message);

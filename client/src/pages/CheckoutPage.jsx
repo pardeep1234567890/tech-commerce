@@ -4,6 +4,7 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { BACKEND_URL } from '../config/api';
 
 const CheckoutPage = () => {
     const navigate = useNavigate();
@@ -66,18 +67,16 @@ const CheckoutPage = () => {
             };
 
             const config = {
-                headers: {
-                    Authorization: `Bearer ${auth.token}`,
-                },
-            };
+            headers: {
+                Authorization: `Bearer ${auth.token}`,
+            },
+        };
 
-            const { data } = await axios.post(
-                'http://localhost:3000/api/orders',
-                orderData,
-                config
-            );
-
-            // Success!
+        const { data } = await axios.post(
+            `${BACKEND_URL}/api/orders`,
+            orderData,
+            config
+        );            // Success!
             if (paymentMethod === 'Card') {
                 toast.success('Payment Successful! Order Placed!');
             } else {

@@ -4,6 +4,7 @@ import { Star, ChevronLeft } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import Loading from '../components/Loading';
 import axios from 'axios';
+import { BACKEND_URL } from '../config/api';
 
 const ProductPage = () => {
     const { id: productId } = useParams(); // Get the 'id' from the URL
@@ -17,7 +18,7 @@ const ProductPage = () => {
         const fetchProduct = async () => {
             try {
                 setLoading(true); // Ensure loading is true on new ID
-                const res = await axios.get(`http://localhost:3000/api/products/${productId}`);
+                const res = await axios.get(`${BACKEND_URL}/api/products/${productId}`);
                 const data = res.data;
                 setProduct(data);
             } catch (err) {
