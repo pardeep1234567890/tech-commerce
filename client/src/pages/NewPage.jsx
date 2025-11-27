@@ -9,10 +9,8 @@ const NewPage = () => {
   useEffect(() => {
     const fetchNewProducts = async () => {
       try {
-        const res = await fetch('http://localhost:3000/api/products');
-        if (res.ok) {
-            const allProducts = await res.json();
-        }
+        const res = await axios.get('http://localhost:3000/api/products');
+        const allProducts = res.data;
 
         const thirtyDaysAgo = new Date(); // creates a date object with today's date
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30); 

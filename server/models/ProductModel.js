@@ -15,7 +15,7 @@ const productSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: 'User', // Reference to the admin who added it
+      ref: 'User',
     },
     name: { type: String, required: true },
     image: { type: String, required: true },

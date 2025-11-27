@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Star, ChevronLeft } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import Loading from '../components/Loading';
+import axios from 'axios';
 
 const ProductPage = () => {
     const { id: productId } = useParams(); // Get the 'id' from the URL
@@ -16,11 +17,8 @@ const ProductPage = () => {
         const fetchProduct = async () => {
             try {
                 setLoading(true); // Ensure loading is true on new ID
-                const res = await fetch(`http://localhost:3000/api/products/${productId}`);
-                if (!res.ok) {
-                    throw new Error('Product not found');
-                }
-                const data = await res.json();
+                const res = await axios.get(`http://localhost:3000/api/products/${productId}`);
+                const data = res.data;
                 setProduct(data);
             } catch (err) {
                 setError(err.message);

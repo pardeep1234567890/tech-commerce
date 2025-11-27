@@ -76,6 +76,11 @@ export const CartProvider = ({ children }) => {
         }
     };
 
+    // Here we make a function to clear the cart 
+    const clearCart = ()=>{
+        setCartItems([]);
+    };
+
     // 6. Value to be "broadcast"
     const value = {
         cartItems,
@@ -84,6 +89,7 @@ export const CartProvider = ({ children }) => {
         addToCart,
         removeFromCart,
         updateQuantity,
+        clearCart,
     };
 
     // 7. Return the Provider

@@ -3,6 +3,7 @@ import Hero from '../components/Hero';
 import ProductCard from '../components/ProductCard';
 import AboutPage from './AboutPage';
 import Loading from '../components/Loading';
+import axios from 'axios';
 
 const Homepage = () => {
   // No more types in useState!
@@ -13,11 +14,8 @@ const Homepage = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch('http://localhost:3000/api/products');
-        if (!res.ok) {
-          throw new Error('Failed to fetch products');
-        }
-        const data = await res.json();
+        const res = await axios.get('http://localhost:3000/api/products');
+        const data = res.data;
         setProducts(data);  //Here we set the data into the products variable  
       } catch (err) { // Simpler catch block
         setError(err.message);

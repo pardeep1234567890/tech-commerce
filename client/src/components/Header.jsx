@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, User, ShoppingBag, Menu, X, LogOut, UserCircle, Sun, Moon, Heart } from 'lucide-react';
+import { Search, User, ShoppingBag, Menu, X, LogOut, UserCircle, Sun, Moon, Heart, Shield, Package, ClipboardList } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -8,7 +8,7 @@ import { useTheme } from '../context/ThemeContext';
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { cartItems, toggleCart } = useCart();
+  const { cartItems, toggleCart, clearCart } = useCart();
   const [keyword, setKeyword] = useState("");
   const { auth, logout } = useAuth();
   const navigate = useNavigate();
@@ -16,7 +16,8 @@ const Header = () => {
 
   const totalItems = cartItems.reduce((acc, item) => acc + item.qty, 0);
   const handleLogout = () => {
-    logout()
+    logout();
+    clearCart();
     navigate("/");
   }
   const handleTheme = () => {
@@ -55,6 +56,34 @@ const Header = () => {
             <Link to="/about" className="text-sm font-medium uppercase tracking-wider text-gray-700 hover:text-black dark:text-gray-300 dark:hover:text-white">
               About
             </Link>
+            {auth && auth.isAdmin && (
+              <div className="relative group flex items-center">
+                <button className="flex items-center gap-1.5 px-3 py-1 text-xs font-semibold uppercase tracking-wider rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105">
+                  <Shield size={14} />
+                  Admin
+                </button>
+                {/* Dropdown Menu and it will be Shows on Hover */}
+                <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-56 rounded-lg bg-white dark:bg-gray-800 py-2 shadow-xl ring-1 ring-black ring-opacity-5 dark:ring-gray-700 focus:outline-none opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform group-hover:translate-y-0 -translate-y-2">
+                  <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
+                    <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Admin Panel</p>
+                  </div>
+                  <Link 
+                    to="/admin/products" 
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-gray-700 hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-150"
+                  >
+                    <Package size={18} />
+                    <span>Manage Products</span>
+                  </Link>
+                  <Link 
+                    to="/admin/orders" 
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-gray-700 hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-150"
+                  >
+                    <ClipboardList size={18} />
+                    <span>Manage Orders</span>
+                  </Link>
+                </div>
+              </div>
+            )}
           </nav>
 
           {/* Icons */}
@@ -77,14 +106,16 @@ const Header = () => {
                 <Search size={20} />
               </button>
             </form>
-            <button
-              onClick={toggleCart}
-              title="Shopping Cart"
-              className="flex items-center text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white"
-            >
-              <ShoppingBag size={20} />
-              <span className="ml-1 text-sm font-medium">({totalItems})</span>
-            </button>
+            {auth && !auth.isAdmin && (
+              <button
+                onClick={toggleCart}
+                title="Shopping Cart"
+                className="flex items-center text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white"
+              >
+                <ShoppingBag size={20} />
+                <span className="ml-1 text-sm font-medium">({totalItems})</span>
+              </button>
+            )}
             <button
               onClick={toggleTheme}
               title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
@@ -92,9 +123,16 @@ const Header = () => {
             >
               {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
             </button>
-            <Link to="/wishlist" title="Wishlist">
-              <Heart size={20} className="text-gray-600 dark:text-gray-400"></Heart>
-            </Link>
+            {auth && !auth.isAdmin && (
+              <>
+                <Link to="/myorders" title="My Orders">
+                  <Package size={20} className="text-gray-600 dark:text-gray-400" />
+                </Link>
+                <Link to="/wishlist" title="Wishlist">
+                  <Heart size={20} className="text-gray-600 dark:text-gray-400"></Heart>
+                </Link>
+              </>
+            )}
 
             {auth ?
               (<div className="flex items-center space-x-2">
@@ -168,6 +206,18 @@ const Header = () => {
             <Link to="/about" className="text-sm font-medium uppercase tracking-wider text-gray-700 hover:text-black dark:text-gray-300 dark:hover:text-white">
               About
             </Link>
+            {auth && !auth.isAdmin && (
+              <>
+                <Link to="/myorders" className="flex items-center gap-2 text-sm font-medium uppercase tracking-wider text-gray-700 hover:text-black dark:text-gray-300 dark:hover:text-white">
+                  <Package size={18} />
+                  My Orders
+                </Link>
+                <Link to="/wishlist" className="flex items-center gap-2 text-sm font-medium uppercase tracking-wider text-gray-700 hover:text-black dark:text-gray-300 dark:hover:text-white">
+                  <Heart size={18} />
+                  Wishlist
+                </Link>
+              </>
+            )}
           </nav>
         </div>
       )}

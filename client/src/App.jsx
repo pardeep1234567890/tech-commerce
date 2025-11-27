@@ -13,13 +13,22 @@ import AboutPage from './pages/AboutPage';
 import NewPage from './pages/NewPage';
 import WishlistPage from './pages/WishlistPage';
 import SearchPage from './pages/SearchPage';
+import CheckoutPage from './pages/CheckoutPage';
+import AdminRoute from './components/AdminRoute';
+import ProductListPage from './pages/admin/ProductListPage';
+import ProductEditPage from './pages/admin/ProductEditPage';
+import OrderPage from './pages/OrderPage';
+import MyOrdersPage from './pages/MyOrdersPage';
+import OrderListPage from './pages/admin/OrderListPage';
+import AdminLoginPage from './pages/admin/AdminLoginPage';
+import AdminDashboard from './pages/admin/AdminDashboard';
 
 function App() {
   return (
     <div className="flex min-h-screen flex-col bg-white text-black dark:bg-black dark:text-white transition-colors duration-300">
       <Header />
       <CartModal />
-      <ToastContainer 
+      <ToastContainer
         position="top-right"
         autoClose={3000}
         hideProgressBar={false}
@@ -36,12 +45,28 @@ function App() {
           <Route path="/" element={<Homepage />} />
           <Route path="/shop" element={<ShopPage />} />
           <Route path="/product/:id" element={<ProductPage />} />
-          <Route path="/login" element={<LoginPage/>} />
-          <Route path="/register" element={<RegisterPage/>} />
-          <Route path="/about" element={<AboutPage/>} />
-          <Route path="/new" element={<NewPage/>} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/new" element={<NewPage />} />
           <Route path="/wishlist" element={<WishlistPage />} />
-          <Route path="/search/:keyword" element={<SearchPage/>} />
+          <Route path="/search/:keyword" element={<SearchPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/myorders" element={<MyOrdersPage />} />
+          <Route path="/admin/products" element={<AdminRoute><ProductListPage /></AdminRoute>} />
+          <Route path="/admin/product/:id/edit" element={<AdminRoute><ProductEditPage /></AdminRoute>} />
+          <Route path="/order/:id" element={<OrderPage />} />
+          <Route path="/admin/orders" element={<AdminRoute><OrderListPage /></AdminRoute>} />
+          <Route path="/admin" element={<AdminLoginPage />} />
+          <Route path="/admin/login" element={<AdminLoginPage/>} />
+          <Route 
+            path="/admin/dashboard" 
+            element={
+              <AdminRoute>
+                <AdminDashboard />
+              </AdminRoute>
+            } 
+          />
         </Routes>
       </main>
       <Footer />

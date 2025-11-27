@@ -22,30 +22,25 @@ export const AuthProvider = ({ children }) => {
     const login = async (email, password) => {
         try {
             const { data } = await axios.post("http://localhost:3000/api/users/login", { email, password });
-            // if (data.success) {
-                toast.success("Login Successfully")
-                setAuth(data);
-                localStorage.setItem('auraAuth', JSON.stringify(data));
-            // } else {
-            //     toast.error("'Invalid email or password'")
-            // }
+            toast.success("Login Successfully")
+            setAuth(data);
+            localStorage.setItem('auraAuth', JSON.stringify(data));
         } catch (error) {
-            toast.error(error.message)
+            const errorMessage = error.response?.data?.message || error.message || 'Login failed';
+            toast.error(errorMessage);
         }
     }
     // here we create a register function 
     const register = async (name, email, password) => {
         try {
             const { data } = await axios.post("http://localhost:3000/api/users", { name, email, password });
-            // if (data.success) {
-                toast.success("Register Successfully")
-                setAuth(data);
-                localStorage.setItem('auraAuth', JSON.stringify(data));
-            // } else {
-                // toast.error("'Invalid email or password'")
-            // }
+            toast.success("Register Successfully")
+            setAuth(data);
+            localStorage.setItem('auraAuth', JSON.stringify(data));
         } catch (error) {
-            toast.error(error.message)
+            const errorMessage = error.response?.data?.message || error.message || 'Registration failed';
+            toast.error(errorMessage);
+            throw error; // Re-throw so RegisterPage can catch it
         }
     }
 

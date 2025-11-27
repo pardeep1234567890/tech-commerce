@@ -62,9 +62,37 @@ const destroyData = async () => {
     }
 };
 
+const createAdminOnly = async () => {
+    try {
+        // Clear ALL data first
+        await Product.deleteMany();
+        await User.deleteMany();
+
+        // Create only the admin user
+        const adminUser = await User.create({
+            name: 'Admin',
+            email: 'admin@aura.com',
+            password: 'password123',
+            isAdmin: true,
+        });
+
+        console.log('✅ Database cleared!');
+        console.log('✅ Admin user created!');
+        console.log('📧 Email: admin@aura.com');
+        console.log('🔑 Password: password123');
+        console.log('\n🎯 You can now login as admin and add your own products!');
+        process.exit();
+    } catch (error) {
+        console.error(`Error: ${error.message}`);
+        process.exit(1);
+    }
+};
+
 // Check for command-line arguments
 if (process.argv[2] === '-d') {
     destroyData();
+} else if (process.argv[2] === '-a') {
+    createAdminOnly();
 } else {
     importData();
 }
