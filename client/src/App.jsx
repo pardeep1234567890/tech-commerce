@@ -5,7 +5,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import Homepage from './pages/Homepage';
 import ShopPage from './pages/ShopPage';
-import ProductPage from './pages/ProductPage';
+import ProductPage from './components/ProductPage';
 import CartModal from './components/CartModal';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -22,6 +22,7 @@ import MyOrdersPage from './pages/MyOrdersPage';
 import OrderListPage from './pages/admin/OrderListPage';
 import AdminLoginPage from './pages/admin/AdminLoginPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import ChatBot from './components/ChatBot';
 
 function App() {
   return (
@@ -70,6 +71,7 @@ function App() {
         </Routes>
       </main>
       <Footer />
+      <ChatBot />
     </div>
   );
 }

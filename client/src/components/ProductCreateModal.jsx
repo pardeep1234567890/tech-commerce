@@ -225,7 +225,7 @@ const ProductCreateModal = ({ isOpen, onClose, onSuccess }) => {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Price ($) <span className="text-red-500">*</span>
+                Price (₹) <span className="text-red-500">*</span>
               </label>
               <input
                 type="number"

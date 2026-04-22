@@ -99,7 +99,7 @@ const MyOrdersPage = () => {
                         Total
                       </p>
                       <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                        ${order.totalPrice.toFixed(2)}
+                        ₹{order.totalPrice.toLocaleString('en-IN')}
                       </p>
                     </div>
                   </div>

@@ -119,7 +119,7 @@ const OrderPage = () => {
                         {item.name}
                       </Link>
                       <p className="text-sm text-gray-500">
-                        {item.qty} x ${item.price} = ${(item.qty * item.price).toFixed(2)}
+                        {item.qty} x ₹{item.price.toLocaleString('en-IN')} = ₹{(item.qty * item.price).toLocaleString('en-IN')}
                       </p>
                     </div>
                   </li>
@@ -135,15 +135,15 @@ const OrderPage = () => {
             <h2 className="text-lg font-medium text-black dark:text-white mb-4">Order Summary</h2>
             <div className="flex justify-between mb-2">
               <span>Items</span>
-              <span>${order.itemsPrice.toFixed(2)}</span>
+              <span>₹{order.itemsPrice.toLocaleString('en-IN')}</span>
             </div>
             <div className="flex justify-between mb-2">
               <span>Shipping</span>
-              <span>${order.shippingPrice.toFixed(2)}</span>
+              <span>₹{order.shippingPrice.toLocaleString('en-IN')}</span>
             </div>
             <div className="flex justify-between font-bold text-lg mt-4 border-t pt-4">
               <span>Total</span>
-              <span>${order.totalPrice.toFixed(2)}</span>
+              <span>₹{order.totalPrice.toLocaleString('en-IN')}</span>
             </div>
             
             {auth && auth.isAdmin && (

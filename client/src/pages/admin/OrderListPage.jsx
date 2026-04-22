@@ -54,7 +54,7 @@ const OrderListPage = () => {
                   {order.createdAt.substring(0, 10)}
                 </td>
                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                  ${order.totalPrice.toFixed(2)}
+                  ₹{order.totalPrice.toLocaleString('en-IN')}
                 </td>
                 <td className="whitespace-nowrap px-3 py-4 text-sm">
                   {order.isPaid ? (

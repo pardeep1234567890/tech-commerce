@@ -34,8 +34,8 @@ const CheckoutPage = () => {
 
     // Calculations 
     const itemsPrice = cartItems.reduce((acc, item) => acc + item.price * item.qty, 0);
-    // Shipping is free if over $100, otherwise $10
-    const shippingPrice = itemsPrice > 100 ? 0 : 10;
+    // Shipping is free if over ₹5000, otherwise ₹500
+    const shippingPrice = itemsPrice > 5000 ? 0 : 500;
     const totalPrice = itemsPrice + shippingPrice;
 
     const handlePlaceOrder = async (e) => {
@@ -260,7 +260,7 @@ const CheckoutPage = () => {
                                             <div>
                                                 <div className="flex justify-between text-base font-medium text-black dark:text-white">
                                                     <h3>{item.name}</h3>
-                                                    <p>${(item.price * item.qty).toFixed(2)}</p>
+                                                    <p>₹{(item.price * item.qty).toLocaleString('en-IN')}</p>
                                                 </div>
                                                 <p className="mt-1 text-sm text-gray-500">Qty: {item.qty}</p>
                                             </div>
@@ -273,15 +273,15 @@ const CheckoutPage = () => {
                         <div className="mt-6 border-t border-gray-200 pt-6 dark:border-gray-700">
                             <div className="flex justify-between text-base font-medium text-black dark:text-white">
                                 <p>Subtotal</p>
-                                <p>${itemsPrice.toFixed(2)}</p>
+                                <p>₹{itemsPrice.toLocaleString('en-IN')}</p>
                             </div>
                             <div className="mt-2 flex justify-between text-sm text-gray-600 dark:text-gray-400">
                                 <p>Shipping</p>
-                                <p>{shippingPrice === 0 ? 'Free' : `$${shippingPrice}`}</p>
+                                <p>{shippingPrice === 0 ? 'Free' : `₹${shippingPrice.toLocaleString('en-IN')}`}</p>
                             </div>
                             <div className="mt-4 flex justify-between border-t border-gray-200 pt-4 text-lg font-bold text-black dark:text-white">
                                 <p>Total</p>
-                                <p>${totalPrice.toFixed(2)}</p>
+                                <p>₹{totalPrice.toLocaleString('en-IN')}</p>
                             </div>
                         </div>
 

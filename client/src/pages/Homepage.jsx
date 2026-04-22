@@ -1,25 +1,22 @@
 import { useState, useEffect } from 'react';
 import Hero from '../components/Hero';
 import ProductCard from '../components/ProductCard';
+import { ProductCardSkeleton, HeroSkeleton } from '../components/Skeleton';
 import AboutPage from './AboutPage';
-import Loading from '../components/Loading';
 import axios from 'axios';
 import { BACKEND_URL } from '../config/api';
 
 const Homepage = () => {
-  // No more types in useState!
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const res = await axios.get(`${BACKEND_URL}/api/products`);
-        const data = res.data;
-        setProducts(data);  //Here we set the data into the products variable  
-      } catch (err) { // Simpler catch block
-        setError(err.message);
+        setProducts(res.data);
+      } catch (err) {
+        console.error('Error fetching products:', err);
       } finally {
         setLoading(false);
       }
@@ -29,8 +26,8 @@ const Homepage = () => {
   }, []);
 
   return (
-    <div>
-      <Hero />
+    <div className="animate-fade-in">
+      {loading ? <HeroSkeleton /> : <Hero />}
 
       {/* Featured Products Section */}
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
@@ -38,20 +35,16 @@ const Homepage = () => {
           Featured
         </h2>
 
-        {/* Loading and Error states */}
-        {loading && <Loading text="Loading products..." />}
-        {error && <p className="mt-4 text-red-500 dark:text-red-400">Error: {error}</p>}
-
         {/* Product Grid */}
-        {!loading && !error && (
-          <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-            {products.slice(0, 4).map((product) => (
-              <ProductCard key={product._id} product={product} />
-            ))}
-          </div>
-        )}
+        <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+          {loading
+            ? Array.from({ length: 4 }).map((_, i) => <ProductCardSkeleton key={i} />)
+            : products.slice(0, 4).map((product) => (
+                <ProductCard key={product._id} product={product} />
+              ))}
+        </div>
       </div>
-      <AboutPage/>
+      <AboutPage />
     </div>
   );
 };

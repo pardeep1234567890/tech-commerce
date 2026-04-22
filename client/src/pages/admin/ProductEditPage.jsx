@@ -93,7 +93,7 @@ const ProductEditPage = () => {
 
         {/* Price */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Price</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Price (₹)</label>
           <input
             type="number"
             value={price}

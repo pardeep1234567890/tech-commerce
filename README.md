@@ -78,14 +78,17 @@ cd server
 # Install dependencies
 npm install
 
-# Create a .env file in the /server folder with:
+# Copy the example env file
+cp .env.example .env
+
+# Then update the values in /server/.env
 PORT=3000
 MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_super_secret_key
 CLOUDINARY_CLOUD_NAME=your_cloudinary_name
 CLOUDINARY_API_KEY=your_cloudinary_key
 CLOUDINARY_API_SECRET=your_cloudinary_secret
-FRONTEND_URL=http://localhost:5173
+GEMINI_API_KEY=your_gemini_api_key
 
 # Seed the database with sample products (optional)
 node seeder.js -a
@@ -96,6 +99,11 @@ npm start
 
 The backend will run on `http://localhost:3000`
 
+Notes:
+- `FRONTEND_URL` is optional for local development.
+- Localhost and `127.0.0.1` are allowed on any port, so both `5173` and `5174` work.
+- Use `FRONTEND_URL` and `FRONTEND_URLS` when you want to explicitly allow deployed frontends.
+
 ### 3. Frontend Setup (Client)
 
 ```bash
@@ -105,7 +113,10 @@ cd client
 # Install dependencies
 npm install
 
-# Create a .env file in the /client folder with:
+# Copy the example env file
+cp .env.example .env
+
+# Then update the value in /client/.env
 VITE_BACKEND_URL=http://localhost:3000
 
 # Start the development server
@@ -131,14 +142,16 @@ This project is deployed on **Vercel** for both frontend and backend.
    cd server
    vercel --prod
    ```
-   Add environment variables on Vercel dashboard.
+   Add environment variables on the Vercel dashboard.
+   Recommended:
+   `FRONTEND_URL=https://auraapparel.vercel.app`
 
 2. **Deploy Frontend:**
    ```bash
    cd client
    vercel --prod
    ```
-   Add `VITE_BACKEND_URL` environment variable pointing to your backend URL.
+   Add `VITE_BACKEND_URL` pointing to your backend URL.
 
 ---
 
@@ -187,9 +200,41 @@ tech-commerce/
 - Import: `import { BACKEND_URL } from '../config/api'`
 
 ### CORS Security
-- Configured to accept requests only from authorized origins
+- Configured to allow localhost and `127.0.0.1` on any port for local development
+- Configured to accept explicitly authorized deployed origins via `FRONTEND_URL` and `FRONTEND_URLS`
 - Supports credentials for JWT authentication
-- Development and production URLs whitelisted
+- Production URLs remain whitelisted
+
+---
+
+## 🔧 Environment Variables
+
+### Server (`server/.env`)
+- `PORT`: Backend port, usually `3000`
+- `MONGO_URI`: MongoDB connection string
+- `JWT_SECRET`: JWT signing secret
+- `CLOUDINARY_CLOUD_NAME`: Cloudinary cloud name
+- `CLOUDINARY_API_KEY`: Cloudinary API key
+- `CLOUDINARY_API_SECRET`: Cloudinary API secret
+- `GEMINI_API_KEY`: Gemini API key for the chatbot
+- `FRONTEND_URL`: Optional primary deployed frontend origin
+- `FRONTEND_URLS`: Optional comma-separated extra frontend origins
+
+Example:
+
+```env
+FRONTEND_URL=https://auraapparel.vercel.app
+FRONTEND_URLS=https://staging-auraapparel.vercel.app,http://localhost:5173
+```
+
+### Client (`client/.env`)
+- `VITE_BACKEND_URL`: Backend base URL used by the frontend
+
+Example:
+
+```env
+VITE_BACKEND_URL=http://localhost:3000
+```
 
 ---
 
@@ -239,7 +284,8 @@ Check your seeded users in MongoDB for admin credentials.
 
 ### CORS Errors
 - Ensure `VITE_BACKEND_URL` is set correctly on frontend
-- Check backend CORS configuration includes your frontend URL
+- If your Vite port changes, localhost is already allowed on any port
+- For deployed frontends, set `FRONTEND_URL` or `FRONTEND_URLS` on the backend
 - See [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for details
 
 ### Environment Variables Not Working
