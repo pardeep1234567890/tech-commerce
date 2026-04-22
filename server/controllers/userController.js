@@ -1,5 +1,8 @@
 import User from '../models/UserModel.js';
 import generateToken from '../utils/generateToken.js';
+import { OAuth2Client } from 'google-auth-library';
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 export const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
@@ -56,6 +59,67 @@ export const loginUser = async (req, res) => {
   } else {
     // FIX 7: Use 401 Unauthorized for bad logins
     res.status(401).json({ message: 'Invalid email or password' });
+  }
+};
+
+// Google Login — verify ID token and find-or-create user
+export const googleLogin = async (req, res) => {
+  const { credential } = req.body;
+
+  if (!credential) {
+    return res.status(400).json({ message: 'Google credential is required' });
+  }
+
+  try {
+    // Verify the Google ID token
+    const ticket = await googleClient.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { sub: googleId, email, name, picture } = payload;
+
+    // 1. Try to find user by googleId
+    let user = await User.findOne({ googleId });
+
+    // 2. If not found by googleId, check by email (account linking)
+    if (!user) {
+      user = await User.findOne({ email });
+
+      if (user) {
+        // Link existing email/password account with Google
+        user.googleId = googleId;
+        if (picture && !user.avatar) {
+          user.avatar = picture;
+        }
+        await user.save();
+      }
+    }
+
+    // 3. If still no user, create a brand new one
+    if (!user) {
+      user = await User.create({
+        name,
+        email,
+        googleId,
+        avatar: picture,
+      });
+    }
+
+    // Return the same shape as normal login
+    const token = generateToken(user._id);
+    res.status(200).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      isAdmin: user.isAdmin,
+      avatar: user.avatar,
+      token,
+    });
+  } catch (error) {
+    console.error('Google login error:', error);
+    res.status(401).json({ message: 'Invalid Google credential' });
   }
 };
 export const toggleWishlist = async (req, res) => {

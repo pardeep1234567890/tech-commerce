@@ -5,7 +5,9 @@ const userSchema = new mongoose.Schema(
     {
         name: { type: String, required: true },
         email: { type: String, required: true, unique: true },
-        password: { type: String, required: true },
+        password: { type: String },
+        googleId: { type: String },
+        avatar: { type: String },
         isAdmin: { type: Boolean, required: true, default: false },
         wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }]
     },
@@ -15,8 +17,8 @@ const userSchema = new mongoose.Schema(
 
 // This function will run before a user is saved (for hashing passwords)
 userSchema.pre('save', async function (next) {
-    if (!this.isModified('password')) {
-        next();
+    if (!this.isModified('password') || !this.password) {
+        return next();
     }
     const salt = await bcrypt.genSalt(10); // Generate random, secure salt
     this.password = await bcrypt.hash(this.password, salt);  // Hash password with salt

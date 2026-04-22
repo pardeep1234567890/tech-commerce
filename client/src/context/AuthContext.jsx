@@ -31,6 +31,22 @@ export const AuthProvider = ({ children }) => {
             toast.error(errorMessage);
         }
     }
+
+    // Google Login function
+    const googleLogin = async (credential) => {
+        try {
+            const { data } = await axios.post(`${BACKEND_URL}/api/users/google-login`, { credential });
+            toast.success("Login Successfully");
+            setAuth(data);
+            localStorage.setItem('auraAuth', JSON.stringify(data));
+            return data;
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || error.message || 'Google login failed';
+            toast.error(errorMessage);
+            throw error;
+        }
+    }
+
     // here we create a register function 
     const register = async (name, email, password) => {
         try {
@@ -55,6 +71,7 @@ export const AuthProvider = ({ children }) => {
     const value = {
         auth,
         login,
+        googleLogin,
         register,
         logout
     }
