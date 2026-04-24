@@ -1,6 +1,6 @@
 # Aura Apparel E-Commerce (MERN Stack)
 
-A full-stack, minimalist streetwear e-commerce platform built from scratch. This project demonstrates a complete MERN stack application with user authentication, product management, a shopping cart, wishlist, and admin dashboard.
+A full-stack, minimalist streetwear e-commerce platform built from scratch. This project demonstrates a complete MERN stack application with user authentication, product management, a shopping cart, wishlist, AI-powered shopping assistant, and admin dashboard.
 
 **Live Demo:** [https://auraapparel.vercel.app](https://auraapparel.vercel.app)
 
@@ -9,6 +9,7 @@ A full-stack, minimalist streetwear e-commerce platform built from scratch. This
 ## 🚀 Core Features
 
 * **Full-Stack Authentication:** Users can register, log in, and log out. Passwords are hashed (using `bcryptjs`) and sessions are managed with **JSON Web Tokens (JWT)**.
+* **Google OAuth Login:** Users can sign in instantly with their Google account using `@react-oauth/google`.
 * **Global State Management:** Uses React Context API for:
     * **Auth Context:** Manages user login state globally.
     * **Cart Context:** Manages the shopping cart, with items saved to `localStorage` for persistence.
@@ -16,9 +17,17 @@ A full-stack, minimalist streetwear e-commerce platform built from scratch. This
     * **Wishlist Context:** Manages user wishlists.
 * **Full-Stack Wishlist:** Logged-in users can add/remove items to their wishlist. This is a protected route that updates the user model in MongoDB.
 * **Dynamic Product Catalog:** Products are fetched from MongoDB, with pages for all products, search, filtering, and single product details.
+* **Product Reviews & Ratings:** Authenticated users can submit reviews and star ratings on product pages.
 * **Shopping Cart & Checkout:** Full cart functionality with checkout process and order management.
+* **AI-Powered Chatbot (Aura AI):** A floating chat assistant powered by **Mistral AI** that can:
+    * Recommend products based on preferences, style, budget, occasion, or brand
+    * Build complete outfits from the live product catalog
+    * Compare two or more products side by side
+    * Answer FAQs about shipping, returns, sizing, and payment methods
+    * Understand what's in the user's cart and suggest complementary items
 * **Admin Dashboard:** Protected admin routes for managing products and orders.
-* **Image Upload:** Cloudinary integration for product image uploads.
+* **Image Upload:** Cloudinary integration for product image uploads (via `multer`).
+* **Smooth Animations:** Page and component transitions powered by **Framer Motion**.
 * **Modern UI:** Built with Tailwind CSS, featuring a clean, responsive, and minimalist design.
 * **Backend API:** A complete RESTful API built with Node.js, Express, and Mongoose.
 * **Environment-Based Configuration:** Dynamic API URLs for seamless development and production deployment.
@@ -32,7 +41,9 @@ A full-stack, minimalist streetwear e-commerce platform built from scratch. This
 * **React Router** (for page navigation)
 * **React Context API** (for global state)
 * **Tailwind CSS** (for styling)
+* **Framer Motion** (for animations and transitions)
 * **Axios** (for API requests)
+* **@react-oauth/google** (for Google OAuth login)
 * **react-toastify** (for notifications)
 * **lucide-react** (for icons)
 
@@ -43,6 +54,9 @@ A full-stack, minimalist streetwear e-commerce platform built from scratch. This
 * **JWT (jsonwebtoken)** (for authentication)
 * **bcryptjs** (for password hashing)
 * **Cloudinary** (for image hosting)
+* **multer** (for handling image uploads)
+* **google-auth-library** (for Google OAuth token verification)
+* **Mistral AI** (for the AI chatbot)
 * **CORS** (configured for security)
 * **dotenv** (for environment variables)
 
@@ -88,7 +102,8 @@ JWT_SECRET=your_super_secret_key
 CLOUDINARY_CLOUD_NAME=your_cloudinary_name
 CLOUDINARY_API_KEY=your_cloudinary_key
 CLOUDINARY_API_SECRET=your_cloudinary_secret
-GEMINI_API_KEY=your_gemini_api_key
+MISTRAL_API_KEY=your_mistral_api_key
+GOOGLE_CLIENT_ID=your_google_oauth_client_id
 
 # Seed the database with sample products (optional)
 node seeder.js -a
@@ -193,6 +208,25 @@ tech-commerce/
 - Protected routes check for valid token
 - Admin routes require `isAdmin` flag
 
+### Google OAuth Login
+- Users click "Sign in with Google" on the login/register page
+- Frontend uses `@react-oauth/google` to obtain a Google ID token
+- Backend verifies the token with `google-auth-library` and returns a JWT
+- New users are created automatically on first Google login
+
+### Aura AI Chatbot
+- Floating chat widget available on every page
+- Powered by **Mistral AI** (`mistral-small-latest` model)
+- Fetches the live product catalog from MongoDB on each request for accurate, up-to-date recommendations
+- Passes the user's current cart contents so the AI can suggest complementary items
+- Supports conversation history for multi-turn chats
+- Capabilities: product recommendations, outfit builder, product comparison, budget filtering, and FAQ support
+- Renders markdown (bold/italic) in chat responses
+
+### Product Reviews
+- Logged-in users can submit a star rating and text comment on any product page
+- Average rating and review count are stored on the product document in MongoDB
+
 ### API Configuration
 - Dynamic backend URL using environment variables
 - Development: `http://localhost:3000`
@@ -216,7 +250,8 @@ tech-commerce/
 - `CLOUDINARY_CLOUD_NAME`: Cloudinary cloud name
 - `CLOUDINARY_API_KEY`: Cloudinary API key
 - `CLOUDINARY_API_SECRET`: Cloudinary API secret
-- `GEMINI_API_KEY`: Gemini API key for the chatbot
+- `MISTRAL_API_KEY`: Mistral AI API key (powers the Aura AI chatbot)
+- `GOOGLE_CLIENT_ID`: Google OAuth client ID (for Google login)
 - `FRONTEND_URL`: Optional primary deployed frontend origin
 - `FRONTEND_URLS`: Optional comma-separated extra frontend origins
 
@@ -244,19 +279,22 @@ VITE_BACKEND_URL=http://localhost:3000
 - `/` - Homepage with featured products
 - `/shop` - All products with category filtering
 - `/search/:keyword` - Search results
-- `/product/:id` - Product details
-- `/login` - User login
+- `/product/:id` - Product details with reviews
+- `/login` - User login (email/password or Google OAuth)
 - `/register` - User registration
+- `/about` - About page
 - `/new` - New arrivals
 
 ### Protected User Routes
 - `/checkout` - Checkout page
-- `/orders` - User's orders
+- `/myorders` - User's orders
 - `/order/:id` - Order details
 - `/wishlist` - User's wishlist
 
 ### Admin Routes
-- `/admin` - Admin dashboard
+- `/admin` - Admin login page
+- `/admin/login` - Admin login page
+- `/admin/dashboard` - Admin dashboard overview
 - `/admin/products` - Product management
 - `/admin/product/:id/edit` - Edit product
 - `/admin/orders` - Order management
