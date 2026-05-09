@@ -7,6 +7,7 @@ import productRoutes from './routes/productRoutes.js';
 import orderRoutes from './routes/orderRoutes.js'
 import uploadRoutes from './routes/uploadRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';
+import paymentRoutes from './routes/paymentRoutes.js';
 
 // Load env vars
 dotenv.config();
@@ -67,6 +68,7 @@ app.use('/api/users',userRoutes);
 app.use('/api/orders',orderRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/payment', paymentRoutes);
 
 const PORT = process.env.PORT || 3000;
 

@@ -18,6 +18,12 @@ const orderSchema = new mongoose.Schema({
       country: { type: String, required: true },
    },
    paymentMethod: { type: String, required: true },
+   paymentResult: {
+      razorpay_order_id: { type: String },
+      razorpay_payment_id: { type: String },
+      razorpay_signature: { type: String },
+      status: { type: String },
+   },
    itemsPrice: { type: Number, required: true, default: 0.0 },
    shippingPrice: { type: Number, required: true, default: 0.0 },
    totalPrice: { type: Number, required: true, default: 0.0 },

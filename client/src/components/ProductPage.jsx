@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Star, ChevronLeft, ZoomIn, Minus, Plus, ShoppingBag, Heart, Share2 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Star, ChevronLeft, ZoomIn, Minus, Plus, ShoppingBag, Heart, Share2, X, Ruler } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useAuth } from '../context/AuthContext';
@@ -9,6 +9,127 @@ import Loading from '../components/Loading';
 import ProductCard from '../components/ProductCard';
 import axios from 'axios';
 import { BACKEND_URL } from '../config/api';
+
+// ===== SIZE CHART MODAL =====
+const SizeChartModal = ({ isOpen, onClose }) => {
+  const sizeData = [
+    { size: 'XS', chest: '32-34', waist: '26-28', hip: '34-36', length: '26' },
+    { size: 'S',  chest: '34-36', waist: '28-30', hip: '36-38', length: '27' },
+    { size: 'M',  chest: '38-40', waist: '32-34', hip: '38-40', length: '28' },
+    { size: 'L',  chest: '40-42', waist: '34-36', hip: '40-42', length: '29' },
+    { size: 'XL', chest: '44-46', waist: '38-40', hip: '44-46', length: '30' },
+    { size: 'XXL',chest: '46-48', waist: '40-42', hip: '46-48', length: '31' },
+  ];
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+          onClick={onClose}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 30 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 30 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white dark:bg-gray-900 rounded-2xl shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 rounded-t-2xl">
+              <div className="flex items-center gap-2">
+                <Ruler size={20} className="text-gray-900 dark:text-white" />
+                <h2 className="text-lg font-bold uppercase tracking-wider text-gray-900 dark:text-white">
+                  Size Guide
+                </h2>
+              </div>
+              <button
+                onClick={onClose}
+                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              >
+                <X size={20} className="text-gray-600 dark:text-gray-300" />
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="p-6">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+                All measurements are in <strong className="text-gray-900 dark:text-white">inches</strong>. 
+                For the best fit, measure your body and compare with the chart below.
+              </p>
+
+              {/* Size Table */}
+              <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-black dark:bg-white text-white dark:text-black">
+                      <th className="px-4 py-3 text-left font-semibold uppercase tracking-wider">Size</th>
+                      <th className="px-4 py-3 text-center font-semibold uppercase tracking-wider">Chest</th>
+                      <th className="px-4 py-3 text-center font-semibold uppercase tracking-wider">Waist</th>
+                      <th className="px-4 py-3 text-center font-semibold uppercase tracking-wider">Hip</th>
+                      <th className="px-4 py-3 text-center font-semibold uppercase tracking-wider">Length</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sizeData.map((row, index) => (
+                      <tr
+                        key={row.size}
+                        className={`border-t border-gray-200 dark:border-gray-700 ${
+                          index % 2 === 0
+                            ? 'bg-gray-50 dark:bg-gray-800/50'
+                            : 'bg-white dark:bg-gray-900'
+                        } hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors`}
+                      >
+                        <td className="px-4 py-3 font-bold text-gray-900 dark:text-white">{row.size}</td>
+                        <td className="px-4 py-3 text-center text-gray-600 dark:text-gray-300">{row.chest}</td>
+                        <td className="px-4 py-3 text-center text-gray-600 dark:text-gray-300">{row.waist}</td>
+                        <td className="px-4 py-3 text-center text-gray-600 dark:text-gray-300">{row.hip}</td>
+                        <td className="px-4 py-3 text-center text-gray-600 dark:text-gray-300">{row.length}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* How to measure */}
+              <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                <h3 className="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-white mb-3">
+                  How to Measure
+                </h3>
+                <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                  <li className="flex items-start gap-2">
+                    <span className="mt-1 w-1.5 h-1.5 rounded-full bg-black dark:bg-white flex-shrink-0"></span>
+                    <span><strong className="text-gray-900 dark:text-white">Chest:</strong> Measure around the fullest part of your chest, keeping the tape level.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="mt-1 w-1.5 h-1.5 rounded-full bg-black dark:bg-white flex-shrink-0"></span>
+                    <span><strong className="text-gray-900 dark:text-white">Waist:</strong> Measure around your natural waistline, at the narrowest point.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="mt-1 w-1.5 h-1.5 rounded-full bg-black dark:bg-white flex-shrink-0"></span>
+                    <span><strong className="text-gray-900 dark:text-white">Hip:</strong> Stand with feet together and measure around the widest part of your hips.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="mt-1 w-1.5 h-1.5 rounded-full bg-black dark:bg-white flex-shrink-0"></span>
+                    <span><strong className="text-gray-900 dark:text-white">Length:</strong> Measured from the highest point of the shoulder to the bottom hem.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <p className="mt-4 text-xs text-gray-500 dark:text-gray-500 text-center">
+                If you're between sizes, we recommend sizing up for a relaxed fit.
+              </p>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
 
 const ProductPage = () => {
   const { id: productId } = useParams();
@@ -19,6 +140,7 @@ const ProductPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [isZoomed, setIsZoomed] = useState(false);
   const [relatedProducts, setRelatedProducts] = useState([]);
+  const [showSizeChart, setShowSizeChart] = useState(false);
 
   const { addToCart } = useCart();
   const { toggleWishlist, isWishlisted } = useWishlist();
@@ -208,7 +330,10 @@ const ProductPage = () => {
                 <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider">
                   Select Size
                 </h3>
-                <button className="text-sm text-primary-600 dark:text-primary-400 hover:underline">
+                <button
+                  onClick={() => setShowSizeChart(true)}
+                  className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
+                >
                   Size Guide
                 </button>
               </div>
@@ -353,6 +478,9 @@ const ProductPage = () => {
           </motion.div>
         )}
       </div>
+
+      {/* Size Chart Modal */}
+      <SizeChartModal isOpen={showSizeChart} onClose={() => setShowSizeChart(false)} />
     </motion.div>
   );
 };

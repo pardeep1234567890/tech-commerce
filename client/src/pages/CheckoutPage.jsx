@@ -18,12 +18,6 @@ const CheckoutPage = () => {
     const [country, setCountry] = useState('');
     const [paymentMethod, setPaymentMethod] = useState('COD');
     const [orderPlaced, setOrderPlaced] = useState(false);
-    
-    // Card details state (for dummy payment)
-    const [cardNumber, setCardNumber] = useState('');
-    const [cardName, setCardName] = useState('');
-    const [expiryDate, setExpiryDate] = useState('');
-    const [cvv, setCvv] = useState('');
     const [processing, setProcessing] = useState(false);
 
     // Redirect if cart is empty or user not logged in
@@ -38,59 +32,137 @@ const CheckoutPage = () => {
     const shippingPrice = itemsPrice > 5000 ? 0 : 500;
     const totalPrice = itemsPrice + shippingPrice;
 
-    const handlePlaceOrder = async (e) => {
-        e.preventDefault();
+    const config = {
+        headers: {
+            Authorization: `Bearer ${auth?.token}`,
+        },
+    };
 
+    // Build the order data object (reused by both COD and Razorpay flows)
+    const buildOrderData = (isPaid = false) => ({
+        orderItems: cartItems.map(item => ({
+            name: item.name,
+            qty: item.qty,
+            image: item.image,
+            price: item.price,
+            product: item._id,
+        })),
+        shippingAddress: { address, city, postalCode, country },
+        paymentMethod: paymentMethod === 'COD' ? 'Cash on Delivery' : 'Razorpay',
+        itemsPrice,
+        shippingPrice,
+        totalPrice,
+        isPaid,
+        paidAt: isPaid ? new Date().toISOString() : undefined,
+    });
+
+    // ===== COD FLOW =====
+    const handleCODOrder = async () => {
         try {
-            // If card payment, simulate processing
-            if (paymentMethod === 'Card') {
-                setProcessing(true);
-                // Simulate payment processing delay
-                await new Promise(resolve => setTimeout(resolve, 2000));
-            }
-
-            const orderData = {
-                orderItems: cartItems.map(item => ({
-                    name: item.name,
-                    qty: item.qty,
-                    image: item.image,
-                    price: item.price,
-                    product: item._id,
-                })),
-                shippingAddress: { address, city, postalCode, country },
-                paymentMethod: paymentMethod === 'COD' ? 'Cash on Delivery' : 'Credit/Debit Card',
-                itemsPrice,
-                shippingPrice,
-                totalPrice,
-                isPaid: paymentMethod === 'Card', // Auto-mark as paid for card payments
-                paidAt: paymentMethod === 'Card' ? new Date().toISOString() : undefined,
-            };
-
-            const config = {
-            headers: {
-                Authorization: `Bearer ${auth.token}`,
-            },
-        };
-
-        const { data } = await axios.post(
-            `${BACKEND_URL}/api/orders`,
-            orderData,
-            config
-        );            // Success!
-            if (paymentMethod === 'Card') {
-                toast.success('Payment Successful! Order Placed!');
-            } else {
-                toast.success('Order Placed! Pay on delivery.');
-            }
+            setProcessing(true);
+            const { data } = await axios.post(
+                `${BACKEND_URL}/api/orders`,
+                buildOrderData(false),
+                config
+            );
+            toast.success('Order Placed! Pay on delivery.');
             setOrderPlaced(true);
             clearCart();
             navigate(`/order/${data._id}`);
-
         } catch (error) {
             const message = error.response?.data?.message || error.message;
             toast.error(message);
         } finally {
             setProcessing(false);
+        }
+    };
+
+    // ===== RAZORPAY FLOW =====
+    const handleRazorpayPayment = async () => {
+        try {
+            setProcessing(true);
+
+            // Step 1: Create our order in the DB first (unpaid)
+            const { data: savedOrder } = await axios.post(
+                `${BACKEND_URL}/api/orders`,
+                buildOrderData(false),
+                config
+            );
+
+            // Step 2: Create a Razorpay order on the server
+            const { data: razorpayOrder } = await axios.post(
+                `${BACKEND_URL}/api/payment/order`,
+                { amount: totalPrice },
+                config
+            );
+
+            // Step 3: Get the Razorpay key
+            const { data: keyData } = await axios.get(`${BACKEND_URL}/api/payment/key`);
+
+            // Step 4: Open Razorpay checkout popup
+            const options = {
+                key: keyData.key,
+                amount: razorpayOrder.amount,
+                currency: razorpayOrder.currency,
+                name: 'Aura Apparel',
+                description: `Order #${savedOrder._id}`,
+                order_id: razorpayOrder.id,
+                handler: async function (response) {
+                    // Step 5: Verify payment on server
+                    try {
+                        const { data: verifiedOrder } = await axios.post(
+                            `${BACKEND_URL}/api/payment/verify`,
+                            {
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_signature: response.razorpay_signature,
+                                orderId: savedOrder._id,
+                            },
+                            config
+                        );
+                        toast.success('Payment Successful! Order Placed!');
+                        setOrderPlaced(true);
+                        clearCart();
+                        navigate(`/order/${verifiedOrder._id}`);
+                    } catch (error) {
+                        toast.error('Payment verification failed. Contact support.');
+                    }
+                },
+                prefill: {
+                    name: auth?.name || '',
+                    email: auth?.email || '',
+                },
+                theme: {
+                    color: '#000000',
+                },
+                modal: {
+                    ondismiss: function () {
+                        setProcessing(false);
+                        toast.info('Payment cancelled.');
+                    },
+                },
+            };
+
+            const rzp = new window.Razorpay(options);
+            rzp.on('payment.failed', function (response) {
+                toast.error(`Payment failed: ${response.error.description}`);
+                setProcessing(false);
+            });
+            rzp.open();
+        } catch (error) {
+            const message = error.response?.data?.message || error.message;
+            toast.error(message);
+            setProcessing(false);
+        }
+    };
+
+    const handlePlaceOrder = async (e) => {
+        e.preventDefault();
+
+        if (paymentMethod === 'COD') {
+            await handleCODOrder();
+        } else {
+            await handleRazorpayPayment();
         }
     };
 
@@ -153,14 +225,14 @@ const CheckoutPage = () => {
                         <div className="mt-8">
                             <h2 className="text-xl font-medium text-black dark:text-white mb-4">Payment Method</h2>
                             <div className="space-y-3">
-                                <label className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-purple-500 dark:border-gray-700 dark:hover:border-purple-500">
+                                <label className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all ${paymentMethod === 'COD' ? 'border-black dark:border-white bg-gray-50 dark:bg-gray-800' : 'border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500'}`}>
                                     <input
                                         type="radio"
                                         name="paymentMethod"
                                         value="COD"
                                         checked={paymentMethod === 'COD'}
                                         onChange={(e) => setPaymentMethod(e.target.value)}
-                                        className="h-4 w-4 text-purple-600 focus:ring-purple-500"
+                                        className="h-4 w-4 text-black focus:ring-black dark:text-white dark:focus:ring-white"
                                     />
                                     <div className="ml-3">
                                         <span className="block text-sm font-medium text-gray-900 dark:text-white">Cash on Delivery</span>
@@ -168,79 +240,36 @@ const CheckoutPage = () => {
                                     </div>
                                 </label>
 
-                                <label className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-purple-500 dark:border-gray-700 dark:hover:border-purple-500">
+                                <label className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all ${paymentMethod === 'Razorpay' ? 'border-black dark:border-white bg-gray-50 dark:bg-gray-800' : 'border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500'}`}>
                                     <input
                                         type="radio"
                                         name="paymentMethod"
-                                        value="Card"
-                                        checked={paymentMethod === 'Card'}
+                                        value="Razorpay"
+                                        checked={paymentMethod === 'Razorpay'}
                                         onChange={(e) => setPaymentMethod(e.target.value)}
-                                        className="h-4 w-4 text-purple-600 focus:ring-purple-500"
+                                        className="h-4 w-4 text-black focus:ring-black dark:text-white dark:focus:ring-white"
                                     />
                                     <div className="ml-3">
-                                        <span className="block text-sm font-medium text-gray-900 dark:text-white">Credit/Debit Card</span>
-                                        <span className="block text-xs text-gray-500 dark:text-gray-400">Pay securely with your card</span>
+                                        <span className="block text-sm font-medium text-gray-900 dark:text-white">Pay Online</span>
+                                        <span className="block text-xs text-gray-500 dark:text-gray-400">UPI, Credit/Debit Card, Net Banking, Wallets</span>
                                     </div>
                                 </label>
                             </div>
                         </div>
 
-                        {/* Card Payment Form (shown only if Card is selected) */}
-                        {paymentMethod === 'Card' && (
-                            <div className="mt-6 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg space-y-4">
-                                <h3 className="text-sm font-medium text-gray-900 dark:text-white">Card Details</h3>
-                                <div>
-                                    <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Card Number</label>
-                                    <input
-                                        type="text"
-                                        placeholder="1234 5678 9012 3456"
-                                        value={cardNumber}
-                                        onChange={(e) => setCardNumber(e.target.value)}
-                                        maxLength="19"
-                                        required={paymentMethod === 'Card'}
-                                        className="block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-purple-500 focus:ring-purple-500 text-sm dark:bg-gray-700 dark:border-gray-600"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Cardholder Name</label>
-                                    <input
-                                        type="text"
-                                        placeholder="John Doe"
-                                        value={cardName}
-                                        onChange={(e) => setCardName(e.target.value)}
-                                        required={paymentMethod === 'Card'}
-                                        className="block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-purple-500 focus:ring-purple-500 text-sm dark:bg-gray-700 dark:border-gray-600"
-                                    />
-                                </div>
-                                <div className="grid grid-cols-2 gap-4">
+                        {/* Razorpay info note */}
+                        {paymentMethod === 'Razorpay' && (
+                            <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                                <div className="flex items-start gap-3">
+                                    <span className="text-blue-600 dark:text-blue-400 text-lg">🔒</span>
                                     <div>
-                                        <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Expiry Date</label>
-                                        <input
-                                            type="text"
-                                            placeholder="MM/YY"
-                                            value={expiryDate}
-                                            onChange={(e) => setExpiryDate(e.target.value)}
-                                            maxLength="5"
-                                            required={paymentMethod === 'Card'}
-                                            className="block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-purple-500 focus:ring-purple-500 text-sm dark:bg-gray-700 dark:border-gray-600"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">CVV</label>
-                                        <input
-                                            type="text"
-                                            placeholder="123"
-                                            value={cvv}
-                                            onChange={(e) => setCvv(e.target.value)}
-                                            maxLength="3"
-                                            required={paymentMethod === 'Card'}
-                                            className="block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-purple-500 focus:ring-purple-500 text-sm dark:bg-gray-700 dark:border-gray-600"
-                                        />
+                                        <p className="text-sm font-medium text-blue-800 dark:text-blue-300">Secure Payment via Razorpay</p>
+                                        <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                                            You'll be redirected to Razorpay's secure checkout. Supports UPI (GPay, PhonePe),
+                                            Credit/Debit Cards, Net Banking, and Wallets.
+                                        </p>
                                     </div>
                                 </div>
-                                <p className="text-xs text-gray-500 dark:text-gray-400 italic">
-                                    🔒 This is a demo payment. Any card details will work.
-                                </p>
                             </div>
                         )}
                     </div>
@@ -288,24 +317,29 @@ const CheckoutPage = () => {
                         <button
                             type="submit"
                             disabled={processing}
-                            className="mt-6 w-full rounded-md bg-gradient-to-r from-purple-600 to-indigo-600 px-4 py-3 text-base font-medium text-white shadow-sm hover:from-purple-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="mt-6 w-full rounded-md bg-black dark:bg-white px-4 py-3 text-base font-medium text-white dark:text-black shadow-sm hover:bg-gray-800 dark:hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
                             {processing ? (
                                 <span className="flex items-center justify-center">
-                                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                     </svg>
-                                    Processing Payment...
+                                    Processing...
                                 </span>
                             ) : (
-                                paymentMethod === 'COD' ? 'Place Order (COD)' : 'Pay & Place Order'
+                                paymentMethod === 'COD' ? 'Place Order (COD)' : `Pay ₹${totalPrice.toLocaleString('en-IN')}`
                             )}
                         </button>
                         
                         {paymentMethod === 'COD' && (
                             <p className="mt-3 text-center text-xs text-gray-500 dark:text-gray-400">
                                 💰 Payment will be collected on delivery
+                            </p>
+                        )}
+                        {paymentMethod === 'Razorpay' && (
+                            <p className="mt-3 text-center text-xs text-gray-500 dark:text-gray-400">
+                                🔒 Secured by Razorpay. Your card details are never stored.
                             </p>
                         )}
                     </div>

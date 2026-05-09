@@ -141,12 +141,9 @@ const AboutPage = () => {
                   more about branding than being.
                 </p>
                 <p>
-                  We chose a different path. Aura is built on the belief that confidence doesn't need validation,
-                  that the best pieces are the ones that let you be the statement.
-                </p>
-                <p>
-                  Every garment is designed to be a foundation—timeless, versatile, built to age with you.
-                  Not fast fashion. Not hype. Just pieces you'll reach for, year after year.
+                  We chose a different path. Every garment is designed to be a foundation—timeless,
+                  versatile, and built to age with you. Not fast fashion. Not hype. Just pieces
+                  you'll reach for, year after year.
                 </p>
               </div>
 
@@ -175,7 +172,7 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* ===== VALUES SECTION ===== */}
+      {/* ===== VALUES SECTION (trimmed to 4) ===== */}
       <section className="bg-gray-50 dark:bg-gray-900 py-24 px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <motion.div
@@ -199,7 +196,7 @@ const AboutPage = () => {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-50px" }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
           >
             {/* Value 1 */}
             <motion.div
@@ -239,22 +236,6 @@ const AboutPage = () => {
               className="group p-8 bg-white dark:bg-black border border-gray-200 dark:border-gray-800 hover:border-black dark:hover:border-white transition-all duration-300"
             >
               <div className="w-12 h-12 flex items-center justify-center bg-black dark:bg-white text-white dark:text-black mb-6">
-                <Users size={24} />
-              </div>
-              <h3 className="text-xl font-bold uppercase tracking-wide text-black dark:text-white">
-                The Collective
-              </h3>
-              <p className="mt-4 text-gray-600 dark:text-gray-400 leading-relaxed">
-                A community of individuals who value substance over hype. You're not alone.
-              </p>
-            </motion.div>
-
-            {/* Value 4 */}
-            <motion.div
-              variants={fadeInUp}
-              className="group p-8 bg-white dark:bg-black border border-gray-200 dark:border-gray-800 hover:border-black dark:hover:border-white transition-all duration-300"
-            >
-              <div className="w-12 h-12 flex items-center justify-center bg-black dark:bg-white text-white dark:text-black mb-6">
                 <Shield size={24} />
               </div>
               <h3 className="text-xl font-bold uppercase tracking-wide text-black dark:text-white">
@@ -265,7 +246,7 @@ const AboutPage = () => {
               </p>
             </motion.div>
 
-            {/* Value 5 */}
+            {/* Value 4 */}
             <motion.div
               variants={fadeInUp}
               className="group p-8 bg-white dark:bg-black border border-gray-200 dark:border-gray-800 hover:border-black dark:hover:border-white transition-all duration-300"
@@ -280,63 +261,6 @@ const AboutPage = () => {
                 Every piece is tested, refined, and perfected before it reaches you.
               </p>
             </motion.div>
-
-            {/* Value 6 */}
-            <motion.div
-              variants={fadeInUp}
-              className="group p-8 bg-white dark:bg-black border border-gray-200 dark:border-gray-800 hover:border-black dark:hover:border-white transition-all duration-300"
-            >
-              <div className="w-12 h-12 flex items-center justify-center bg-black dark:bg-white text-white dark:text-black mb-6">
-                <Globe size={24} />
-              </div>
-              <h3 className="text-xl font-bold uppercase tracking-wide text-black dark:text-white">
-                Globally Inspired
-              </h3>
-              <p className="mt-4 text-gray-600 dark:text-gray-400 leading-relaxed">
-                Street culture from Tokyo to Brooklyn. Urban aesthetics without borders.
-              </p>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ===== MISSION SECTION ===== */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-black dark:bg-gray-950 text-white">
-        <div className="mx-auto max-w-4xl text-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-3xl font-bold uppercase tracking-wider">
-              Our Mission
-            </h2>
-            <div className="mt-2 w-20 h-1 bg-white mx-auto"></div>
-          </motion.div>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-8 text-xl text-gray-300 dark:text-gray-400 leading-relaxed"
-          >
-            In a world of noise, we strive for signal. Aura Apparel was founded on the idea that
-            <span className="text-white font-medium"> true style comes from confidence, not complexity</span>.
-            Our pieces are designed to be the foundation of your wardrobe—timeless, durable, and versatile.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="mt-12"
-          >
-            <blockquote className="border-l-4 border-white pl-6 text-left italic text-gray-300 dark:text-gray-400">
-              "We don't chase trends. We don't do drops. We build pieces that outlast seasons."
-            </blockquote>
           </motion.div>
         </div>
       </section>
@@ -379,30 +303,6 @@ const AboutPage = () => {
               New Arrivals
             </a>
           </motion.div>
-        </div>
-      </section>
-
-      {/* ===== FOOTER IMAGE ===== */}
-      <section className="relative h-96 overflow-hidden">
-        <motion.img
-          initial={{ scale: 1.1 }}
-          whileInView={{ scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1 }}
-          src="https://images.unsplash.com/photo-1614631446501-abcf76949eca?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          alt="Aura Collective"
-          className="h-full w-full object-cover grayscale"
-        />
-        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-4xl font-bold uppercase tracking-widest text-white"
-          >
-            Aura
-          </motion.p>
         </div>
       </section>
 

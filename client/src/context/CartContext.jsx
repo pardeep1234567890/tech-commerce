@@ -39,18 +39,19 @@ export const CartProvider = ({ children }) => {
     const toggleCart = () => setIsCartOpen(!isCartOpen);
 
     const addToCart = (product) => {
+        const qtyToAdd = product.quantity || 1;
         setCartItems((prevItems) => {
             // Check if the item (and specific size) is already in the cart
             const existingItem = prevItems.find((item) => item._id === product._id);
 
             if (existingItem) {
-                // If it exists, map over and increase quantity
+                // If it exists, map over and increase quantity by the selected amount
                 return prevItems.map((item) =>
-                    item._id === product._id ? { ...item, qty: item.qty + 1 } : item
+                    item._id === product._id ? { ...item, qty: item.qty + qtyToAdd } : item
                 );
             } else {
-                // If it's new, add it to the cart with quantity 1
-                return [...prevItems, { ...product, qty: 1 }];
+                // If it's new, add it to the cart with the selected quantity
+                return [...prevItems, { ...product, qty: qtyToAdd }];
             }
         });
         // Open the cart modal when an item is added
