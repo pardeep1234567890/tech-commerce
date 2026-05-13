@@ -12,23 +12,45 @@ import paymentRoutes from './routes/paymentRoutes.js';
 // Load env vars
 dotenv.config();
 
-// Connect to database
-connectDB();
-
 const app = express();
 
 // Body parser middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+let dbConnectionPromise;
+
+const ensureDatabaseConnection = async (req, res, next) => {
+  if (req.method === 'OPTIONS') {
+    next();
+    return;
+  }
+
+  if (!dbConnectionPromise) {
+    dbConnectionPromise = connectDB().catch((error) => {
+      dbConnectionPromise = undefined;
+      throw error;
+    });
+  }
+
+  try {
+    await dbConnectionPromise;
+    next();
+  } catch (error) {
+    console.error('Database connection failed:', error.message);
+    res.status(500).json({ message: 'Database connection failed' });
+  }
+};
+
 const configuredOrigins = [
   process.env.FRONTEND_URL,
   process.env.FRONTEND_URLS,
   'https://auraapparel.vercel.app',
+  'https://aura-apparel-ten.vercel.app',
 ]
   .filter(Boolean)
   .flatMap((value) => value.split(','))
-  .map((origin) => origin.trim())
+  .map((origin) => origin.trim().replace(/\/$/, ''))
   .filter(Boolean);
 
 const isAllowedLocalOrigin = (origin) => {
@@ -46,7 +68,9 @@ const isAllowedLocalOrigin = (origin) => {
 // Enable CORS with specific configuration
 const corsOptions = {
   origin: (origin, callback) => {
-    if (!origin || isAllowedLocalOrigin(origin) || configuredOrigins.includes(origin)) {
+    const normalizedOrigin = origin?.replace(/\/$/, '');
+
+    if (!origin || isAllowedLocalOrigin(origin) || configuredOrigins.includes(normalizedOrigin)) {
       callback(null, true);
       return;
     }
@@ -63,6 +87,7 @@ app.get('/', (req, res) => {
   res.send('Aura Apparel API is running...');
 });
 
+app.use('/api', ensureDatabaseConnection);
 app.use('/api/products', productRoutes);
 app.use('/api/users',userRoutes);
 app.use('/api/orders',orderRoutes);
@@ -72,7 +97,9 @@ app.use('/api/payment', paymentRoutes);
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+}
 
 // Export for Vercel serverless
 export default app;
