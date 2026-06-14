@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Star, ChevronLeft, ZoomIn, Minus, Plus, ShoppingBag, Heart, Share2, X, Ruler } from 'lucide-react';
+import { Star, ChevronLeft, ZoomIn, Minus, Plus, ShoppingBag, Heart, X, Ruler } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -142,6 +142,14 @@ const ProductPage = () => {
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [showSizeChart, setShowSizeChart] = useState(false);
 
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState('');
+  const [reviewLoading, setReviewLoading] = useState(false);
+  const [reviewError, setReviewError] = useState(null);
+  const [reviewSuccess, setReviewSuccess] = useState(false);
+  
+  const reviewsRef = useRef(null);
+
   const { addToCart } = useCart();
   const { toggleWishlist, isWishlisted } = useWishlist();
   const { auth } = useAuth();
@@ -179,6 +187,34 @@ const ProductPage = () => {
 
   const handleWishlistToggle = () => {
     toggleWishlist(product._id);
+  };
+
+  const submitReviewHandler = async (e) => {
+    e.preventDefault();
+    setReviewLoading(true);
+    setReviewError(null);
+    setReviewSuccess(false);
+    try {
+      await axios.post(
+        `${BACKEND_URL}/api/products/${productId}/reviews`,
+        { rating, comment },
+        {
+          headers: {
+            Authorization: `Bearer ${auth?.token}`,
+          },
+        }
+      );
+      setReviewSuccess(true);
+      setRating(0);
+      setComment('');
+      // Refetch product to get new reviews
+      const res = await axios.get(`${BACKEND_URL}/api/products/${productId}`);
+      setProduct(res.data);
+    } catch (err) {
+      setReviewError(err.response?.data?.message || err.message);
+    } finally {
+      setReviewLoading(false);
+    }
   };
 
   if (loading) {
@@ -300,7 +336,10 @@ const ProductPage = () => {
               <p className="text-3xl font-bold text-gray-900 dark:text-white">
                 ₹{product.price.toLocaleString('en-IN')}
               </p>
-              <div className="flex items-center gap-2">
+              <div 
+                className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity" 
+                onClick={() => reviewsRef.current?.scrollIntoView({ behavior: 'smooth' })}
+              >
                 <div className="flex">
                   {[0, 1, 2, 3, 4].map((rating) => (
                     <Star
@@ -422,13 +461,7 @@ const ProductPage = () => {
                 />
               </motion.button>
 
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="p-4 rounded-lg border-2 border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 transition-all duration-200"
-              >
-                <Share2 size={24} className="text-gray-600 dark:text-gray-300" />
-              </motion.button>
+
             </div>
 
             {/* Trust Badges */}
@@ -458,6 +491,105 @@ const ProductPage = () => {
             </div>
           </motion.div>
         </div>
+
+        {/* Reviews Section */}
+        <motion.div
+          ref={reviewsRef}
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="mt-20 pt-12 border-t border-gray-200 dark:border-gray-700 grid grid-cols-1 md:grid-cols-2 gap-12"
+        >
+          <div>
+            <h2 className="text-2xl font-bold uppercase tracking-widest text-gray-900 dark:text-white mb-8">
+              Reviews
+            </h2>
+            {product.reviews && product.reviews.length === 0 && (
+              <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl mb-4">
+                <p className="text-gray-600 dark:text-gray-300">No reviews yet. Be the first to review this product!</p>
+              </div>
+            )}
+            <div className="space-y-6">
+              {product.reviews && product.reviews.map((review) => (
+                <div key={review._id} className="p-6 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl">
+                  <div className="flex items-center justify-between mb-2">
+                    <strong className="text-gray-900 dark:text-white">{review.name}</strong>
+                    <div className="flex">
+                      {[0, 1, 2, 3, 4].map((i) => (
+                        <Star
+                          key={i}
+                          size={14}
+                          className={review.rating > i ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600'}
+                          fill="currentColor"
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">{review.createdAt?.substring(0, 10)}</p>
+                  <p className="text-gray-700 dark:text-gray-300">{review.comment}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold uppercase tracking-widest text-gray-900 dark:text-white mb-8">
+              Write a Review
+            </h2>
+            {auth ? (
+              <form onSubmit={submitReviewHandler} className="space-y-6">
+                {reviewSuccess && (
+                  <div className="p-4 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded-lg">
+                    Review submitted successfully!
+                  </div>
+                )}
+                {reviewError && (
+                  <div className="p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg">
+                    {reviewError}
+                  </div>
+                )}
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">Rating</label>
+                  <select
+                    value={rating}
+                    onChange={(e) => setRating(Number(e.target.value))}
+                    className="w-full p-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white"
+                    required
+                  >
+                    <option value="">Select...</option>
+                    <option value="1">1 - Poor</option>
+                    <option value="2">2 - Fair</option>
+                    <option value="3">3 - Good</option>
+                    <option value="4">4 - Very Good</option>
+                    <option value="5">5 - Excellent</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">Comment</label>
+                  <textarea
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    rows="4"
+                    className="w-full p-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white"
+                    required
+                  ></textarea>
+                </div>
+                <button
+                  type="submit"
+                  disabled={reviewLoading}
+                  className="w-full py-3 px-4 bg-black dark:bg-white text-white dark:text-black font-bold uppercase tracking-widest rounded-lg disabled:opacity-50"
+                >
+                  {reviewLoading ? 'Submitting...' : 'Submit Review'}
+                </button>
+              </form>
+            ) : (
+              <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                <p className="text-gray-600 dark:text-gray-300">
+                  Please <Link to={`/login?redirect=/product/${productId}`} className="text-primary-600 hover:underline font-bold">sign in</Link> to write a review.
+                </p>
+              </div>
+            )}
+          </div>
+        </motion.div>
 
         {/* Related Products */}
         {relatedProducts.length > 0 && (
