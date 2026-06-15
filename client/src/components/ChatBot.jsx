@@ -209,38 +209,32 @@ const ChatBot = () => {
   const OutfitBanner = ({ outfit }) => {
     if (!outfit) return null;
     return (
-      <div className={`mt-2.5 rounded-xl overflow-hidden ${
-        theme === 'dark'
+      <div className={`mt-2.5 rounded-xl overflow-hidden ${theme === 'dark'
           ? 'bg-gradient-to-r from-purple-900/50 to-indigo-900/50 border border-purple-700/50'
           : 'bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200'
-      }`}>
+        }`}>
         <div className="px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-              theme === 'dark' ? 'bg-purple-600/30' : 'bg-purple-100'
-            }`}>
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${theme === 'dark' ? 'bg-purple-600/30' : 'bg-purple-100'
+              }`}>
               <Shirt size={16} className="text-purple-500" />
             </div>
             <div>
-              <p className={`text-xs font-bold ${
-                theme === 'dark' ? 'text-purple-300' : 'text-purple-700'
-              }`}>
+              <p className={`text-xs font-bold ${theme === 'dark' ? 'text-purple-300' : 'text-purple-700'
+                }`}>
                 🎨 {outfit.theme}
               </p>
-              <p className={`text-[10px] ${
-                theme === 'dark' ? 'text-purple-400' : 'text-purple-500'
-              }`}>
+              <p className={`text-[10px] ${theme === 'dark' ? 'text-purple-400' : 'text-purple-500'
+                }`}>
                 Complete outfit suggestion
               </p>
             </div>
           </div>
           <div className={`text-right`}>
-            <p className={`text-[10px] ${
-              theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-            }`}>Total</p>
-            <p className={`text-sm font-bold ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}>
+            <p className={`text-[10px] ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+              }`}>Total</p>
+            <p className={`text-sm font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+              }`}>
               ₹{outfit.totalPrice?.toLocaleString('en-IN')}
             </p>
           </div>
@@ -253,21 +247,18 @@ const ChatBot = () => {
   const ComparisonTable = ({ comparison }) => {
     if (!comparison || !comparison.products || !comparison.rows) return null;
     return (
-      <div className={`mt-2.5 rounded-xl overflow-hidden border ${
-        theme === 'dark'
+      <div className={`mt-2.5 rounded-xl overflow-hidden border ${theme === 'dark'
           ? 'bg-gray-800 border-gray-700'
           : 'bg-white border-gray-200 shadow-sm'
-      }`}>
+        }`}>
         {/* Comparison Header */}
-        <div className={`px-3 py-2 flex items-center gap-2 border-b ${
-          theme === 'dark'
+        <div className={`px-3 py-2 flex items-center gap-2 border-b ${theme === 'dark'
             ? 'bg-gradient-to-r from-indigo-900/40 to-purple-900/40 border-gray-700'
             : 'bg-gradient-to-r from-indigo-50 to-purple-50 border-gray-200'
-        }`}>
-          <ArrowLeftRight size={14} className="text-indigo-500" />
-          <span className={`text-xs font-bold ${
-            theme === 'dark' ? 'text-indigo-300' : 'text-indigo-700'
           }`}>
+          <ArrowLeftRight size={14} className="text-indigo-500" />
+          <span className={`text-xs font-bold ${theme === 'dark' ? 'text-indigo-300' : 'text-indigo-700'
+            }`}>
             Product Comparison
           </span>
         </div>
@@ -276,16 +267,13 @@ const ChatBot = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-[11px]">
             <thead>
-              <tr className={`border-b ${
-                theme === 'dark' ? 'border-gray-700' : 'border-gray-100'
-              }`}>
-                <th className={`px-3 py-2 text-left font-medium ${
-                  theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-                }`}></th>
+              <tr className={`border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-100'
+                }`}>
+                <th className={`px-3 py-2 text-left font-medium ${theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
+                  }`}></th>
                 {comparison.products.map((name, i) => (
-                  <th key={i} className={`px-3 py-2 text-left font-bold ${
-                    theme === 'dark' ? 'text-purple-400' : 'text-purple-600'
-                  }`}>
+                  <th key={i} className={`px-3 py-2 text-left font-bold ${theme === 'dark' ? 'text-purple-400' : 'text-purple-600'
+                    }`}>
                     {name}
                   </th>
                 ))}
@@ -293,20 +281,17 @@ const ChatBot = () => {
             </thead>
             <tbody>
               {comparison.rows.map((row, rIdx) => (
-                <tr key={rIdx} className={`border-b last:border-b-0 ${
-                  theme === 'dark'
+                <tr key={rIdx} className={`border-b last:border-b-0 ${theme === 'dark'
                     ? `border-gray-700/50 ${rIdx % 2 === 0 ? 'bg-gray-800' : 'bg-gray-800/50'}`
                     : `border-gray-50 ${rIdx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`
-                }`}>
-                  <td className={`px-3 py-2 font-semibold whitespace-nowrap ${
-                    theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
                   }`}>
+                  <td className={`px-3 py-2 font-semibold whitespace-nowrap ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                    }`}>
                     {row.label}
                   </td>
                   {row.values.map((val, vIdx) => (
-                    <td key={vIdx} className={`px-3 py-2 ${
-                      theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
-                    } ${row.label === 'Price' ? 'font-bold' : ''}`}>
+                    <td key={vIdx} className={`px-3 py-2 ${theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
+                      } ${row.label === 'Price' ? 'font-bold' : ''}`}>
                       {val}
                     </td>
                   ))}
@@ -325,10 +310,10 @@ const ChatBot = () => {
       <button
         id="chatbot-toggle"
         onClick={() => setIsOpen(!isOpen)}
-        className={`fixed bottom-6 right-6 z-50 flex items-center justify-center w-14 h-14 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 ${
+        className={`fixed bottom-6 right-6 z-50 flex items-center justify-center rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 ${
           isOpen
-            ? 'bg-gray-800 dark:bg-gray-200 rotate-0'
-            : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700'
+            ? 'w-14 h-14 bg-gray-800 dark:bg-gray-200 rotate-0'
+            : 'h-14 px-5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 gap-2.5'
         }`}
         title={isOpen ? 'Close chat' : 'Chat with Aura AI'}
       >
@@ -336,9 +321,12 @@ const ChatBot = () => {
           <X size={24} className="text-white dark:text-gray-800" />
         ) : (
           <>
-            <MessageCircle size={24} className="text-white" />
-            {/* Ping animation on the FAB */}
-            <span className="absolute top-0 right-0 w-3.5 h-3.5 bg-green-400 rounded-full border-2 border-white dark:border-gray-900 animate-pulse" />
+            <div className="relative flex items-center justify-center">
+              <MessageCircle size={24} className="text-white" />
+              {/* Ping animation on the icon */}
+              <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse" />
+            </div>
+            <span className="font-bold text-white tracking-wider text-sm">AURA AI</span>
           </>
         )}
       </button>
@@ -346,17 +334,15 @@ const ChatBot = () => {
       {/* Chat Panel */}
       <div
         id="chatbot-panel"
-        className={`fixed bottom-24 right-6 z-50 w-[380px] max-w-[calc(100vw-2rem)] transition-all duration-300 ease-out origin-bottom-right ${
-          isOpen
+        className={`fixed bottom-24 right-6 z-50 w-[380px] max-w-[calc(100vw-2rem)] transition-all duration-300 ease-out origin-bottom-right ${isOpen
             ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto'
             : 'opacity-0 scale-95 translate-y-4 pointer-events-none'
-        }`}
+          }`}
       >
-        <div className={`flex flex-col h-[550px] max-h-[calc(100vh-8rem)] rounded-2xl shadow-2xl border overflow-hidden ${
-          theme === 'dark'
+        <div className={`flex flex-col h-[550px] max-h-[calc(100vh-8rem)] rounded-2xl shadow-2xl border overflow-hidden ${theme === 'dark'
             ? 'bg-gray-900 border-gray-700'
             : 'bg-white border-gray-200'
-        }`}>
+          }`}>
 
           {/* Header */}
           <div className="flex items-center gap-3 px-5 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white flex-shrink-0">
@@ -380,9 +366,8 @@ const ChatBot = () => {
           </div>
 
           {/* Messages Area */}
-          <div className={`flex-1 overflow-y-auto px-4 py-4 space-y-4 ${
-            theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'
-          }`}>
+          <div className={`flex-1 overflow-y-auto px-4 py-4 space-y-4 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'
+            }`}>
             {messages.map((msg, index) => (
               <div key={index} className={`flex gap-2.5 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 {/* Assistant avatar */}
@@ -391,16 +376,15 @@ const ChatBot = () => {
                     <Sparkles size={14} className="text-white" />
                   </div>
                 )}
-                
+
                 <div className={`max-w-[80%] ${msg.role === 'user' ? 'order-1' : ''}`}>
                   {/* Message bubble */}
-                  <div className={`px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed ${
-                    msg.role === 'user'
+                  <div className={`px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed ${msg.role === 'user'
                       ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-br-md'
                       : theme === 'dark'
                         ? 'bg-gray-800 text-gray-200 rounded-bl-md border border-gray-700'
                         : 'bg-white text-gray-800 rounded-bl-md border border-gray-200 shadow-sm'
-                  }`}>
+                    }`}>
                     {renderMarkdown(msg.content)}
                   </div>
 
@@ -413,11 +397,10 @@ const ChatBot = () => {
                       {msg.products.map((product, pIdx) => (
                         <div
                           key={pIdx}
-                          className={`rounded-xl overflow-hidden border transition-all duration-200 hover:shadow-md ${
-                            theme === 'dark'
+                          className={`rounded-xl overflow-hidden border transition-all duration-200 hover:shadow-md ${theme === 'dark'
                               ? 'bg-gray-800 border-gray-700 hover:border-purple-500'
                               : 'bg-white border-gray-200 hover:border-purple-400'
-                          }`}
+                            }`}
                         >
                           <div className="flex items-center gap-3 p-3">
                             {/* Product image */}
@@ -436,9 +419,8 @@ const ChatBot = () => {
                             <div className="flex-1 min-w-0">
                               <p
                                 onClick={() => handleProductClick(product._id)}
-                                className={`text-xs font-medium truncate cursor-pointer hover:underline ${
-                                  theme === 'dark' ? 'text-gray-200' : 'text-gray-800'
-                                }`}
+                                className={`text-xs font-medium truncate cursor-pointer hover:underline ${theme === 'dark' ? 'text-gray-200' : 'text-gray-800'
+                                  }`}
                               >
                                 {product.name}
                               </p>
@@ -469,9 +451,8 @@ const ChatBot = () => {
 
                 {/* User avatar */}
                 {msg.role === 'user' && (
-                  <div className={`flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center mt-0.5 order-2 ${
-                    theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'
-                  }`}>
+                  <div className={`flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center mt-0.5 order-2 ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'
+                    }`}>
                     <User size={14} className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} />
                   </div>
                 )}
@@ -484,11 +465,10 @@ const ChatBot = () => {
                 <div className="flex-shrink-0 w-7 h-7 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 flex items-center justify-center">
                   <Sparkles size={14} className="text-white" />
                 </div>
-                <div className={`px-4 py-3 rounded-2xl rounded-bl-md ${
-                  theme === 'dark'
+                <div className={`px-4 py-3 rounded-2xl rounded-bl-md ${theme === 'dark'
                     ? 'bg-gray-800 border border-gray-700'
                     : 'bg-white border border-gray-200 shadow-sm'
-                }`}>
+                  }`}>
                   <div className="flex gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-purple-400 animate-bounce" style={{ animationDelay: '0ms' }} />
                     <span className="w-2 h-2 rounded-full bg-purple-400 animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -501,9 +481,8 @@ const ChatBot = () => {
             {/* Quick Actions - shown after every AI reply when not loading */}
             {!isLoading && messages.length > 0 && messages[messages.length - 1]?.role === 'assistant' && (
               <div className="space-y-2 pt-2">
-                <p className={`text-xs font-medium px-1 ${
-                  theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                }`}>
+                <p className={`text-xs font-medium px-1 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                  }`}>
                   Try asking:
                 </p>
                 <div className="grid grid-cols-2 gap-2">
@@ -511,11 +490,10 @@ const ChatBot = () => {
                     <button
                       key={idx}
                       onClick={() => handleQuickAction(action.message)}
-                      className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs font-medium transition-all duration-200 text-left ${
-                        theme === 'dark'
+                      className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs font-medium transition-all duration-200 text-left ${theme === 'dark'
                           ? 'bg-gray-800 text-gray-300 border border-gray-700 hover:border-purple-500 hover:text-purple-400'
                           : 'bg-white text-gray-700 border border-gray-200 hover:border-purple-400 hover:text-purple-600 shadow-sm'
-                      }`}
+                        }`}
                     >
                       <span className="text-purple-500">{action.icon}</span>
                       {action.label}
@@ -531,11 +509,10 @@ const ChatBot = () => {
           {/* Input Area */}
           <form
             onSubmit={handleSubmit}
-            className={`flex items-center gap-2 px-4 py-3 border-t flex-shrink-0 ${
-              theme === 'dark'
+            className={`flex items-center gap-2 px-4 py-3 border-t flex-shrink-0 ${theme === 'dark'
                 ? 'bg-gray-900 border-gray-700'
                 : 'bg-white border-gray-200'
-            }`}
+              }`}
           >
             <input
               ref={inputRef}
@@ -544,11 +521,10 @@ const ChatBot = () => {
               onChange={(e) => setInputValue(e.target.value)}
               placeholder="Ask me anything..."
               disabled={isLoading}
-              className={`flex-1 px-4 py-2.5 rounded-xl text-sm outline-none transition-colors ${
-                theme === 'dark'
+              className={`flex-1 px-4 py-2.5 rounded-xl text-sm outline-none transition-colors ${theme === 'dark'
                   ? 'bg-gray-800 text-gray-200 placeholder-gray-500 border border-gray-700 focus:border-purple-500'
                   : 'bg-gray-100 text-gray-800 placeholder-gray-400 border border-transparent focus:border-purple-400 focus:bg-white'
-              } disabled:opacity-50`}
+                } disabled:opacity-50`}
             />
             <button
               type="submit"
