@@ -7,16 +7,24 @@ import { BACKEND_URL } from '../config/api';
 
 const SearchPage = () => {
   const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [categories, setCategories] = useState([]);
   const {keyword} = useParams();
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        setLoading(true);
+        setSelectedCategory('All');
         const res = await axios.get(`${BACKEND_URL}/api/products?keyword=${keyword}`);
         const data = res.data;
         setProducts(data);
+        setFilteredProducts(data);
+        const uniqueCategories = [...new Set(data.map(p => p.category).filter(Boolean))];
+        setCategories(['All', ...uniqueCategories]);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -26,6 +34,14 @@ const SearchPage = () => {
 
     fetchProducts();
   }, [keyword]);
+
+  useEffect(() => {
+    if (selectedCategory === 'All') {
+      setFilteredProducts(products);
+    } else {
+      setFilteredProducts(products.filter(p => p.category === selectedCategory));
+    }
+  }, [selectedCategory, products]);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -44,12 +60,20 @@ const SearchPage = () => {
               Categories
             </h3>
             <ul className="mt-4 space-y-2">
-              {/* These are just placeholders for now */}
-              <li><a href="#" className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white">Hoodies</a></li>
-              <li><a href="#" className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white">T-Shirts</a></li>
-              <li><a href="#" className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white">Pants</a></li>
-              <li><a href="#" className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white">Footwear</a></li>
-              <li><a href="#" className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white">Accessories</a></li>
+              {categories.map((category) => (
+                <li key={category}>
+                  <button
+                    onClick={() => setSelectedCategory(category)}
+                    className={`w-full text-left px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      selectedCategory === category
+                        ? 'bg-black text-white dark:bg-white dark:text-black shadow-md'
+                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-black dark:hover:text-white'
+                    }`}
+                  >
+                    {category}
+                  </button>
+                </li>
+              ))}
             </ul>
           </aside>
 
@@ -60,9 +84,17 @@ const SearchPage = () => {
             
             {!loading && !error && (
               <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8">
-                {products.map((product) => (
-                  <ProductCard key={product._id} product={product} />
-                ))}
+                {filteredProducts.length > 0 ? (
+                  filteredProducts.map((product) => (
+                    <ProductCard key={product._id} product={product} />
+                  ))
+                ) : (
+                  <div className="col-span-full text-center py-16">
+                    <p className="text-gray-500 dark:text-gray-400 text-lg mb-4">
+                      No products found for this search or category.
+                    </p>
+                  </div>
+                )}
               </div>
             )}
           </div>
